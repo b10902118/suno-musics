@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@heroicons/react':
+        specifier: ^2.2.0
+        version: 2.2.0(react@19.1.0)
+      class-lib:
+        specifier: ^0.2.1
+        version: 0.2.1
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -332,6 +338,11 @@ packages:
     resolution: {integrity: sha512-Ul5l+lHEcw3L5+k8POx6r74mxEYKG5kOb6Xpy2gCRW6zweT6TEhAf8vhxGgjhqrd/VO/Dirhsb+1hNpD1ue9hw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@heroicons/react@2.2.0':
+    resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -591,6 +602,9 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
+  array.dedup@0.3.2:
+    resolution: {integrity: sha512-O8YKfORDrsh2rIS3vIerHLH2ZBDl2cXsxBtxclEhAdCxXgL5qBzboBMb8k5Ig04gKPZQP9OvCTYdE4KsUrugJA==}
+
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
@@ -619,6 +633,9 @@ packages:
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
+
+  class-lib@0.2.1:
+    resolution: {integrity: sha512-Nm8gRvlM2lJlECtKw8eS8V8DtmbTDaDZ5NRl/S4fGu2H3Y9lWSjxUM6/pRV6LU3ej7fz7OF+RwHkyfzud56NQg==}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -772,6 +789,9 @@ packages:
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
+
+  get-safe-reg@0.7.0:
+    resolution: {integrity: sha512-f48o9q9+xu2GZrZiYd97nkjgTwMGLbuBYmnriwFg0JPy5OI3ERuzT6RKxunhcrhWnpDKltfoTcFSUKnp7cGgOw==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -961,6 +981,12 @@ packages:
   react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
     engines: {node: '>=0.10.0'}
+
+  reshow-constant@0.18.0:
+    resolution: {integrity: sha512-PfP3L0abOw353Ma0eBHjcBr7Tku4pDFQOrBIwUW7+Re/SwJ15NaNX0BLhHjXWrHJFzmmc7aCDGM3XRDbfhDXlA==}
+
+  reshow-runtime@0.17.15:
+    resolution: {integrity: sha512-jhGSkf7H4mO1KaweNu6d6ZnPd4zdxcWVwL6D7wrmHBckQZgBDXT6MkV+ji1KCLI4wOFYsBptAeo64AEPiqv/kw==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -1346,6 +1372,10 @@ snapshots:
       '@eslint/core': 0.15.1
       levn: 0.4.1
 
+  '@heroicons/react@2.2.0(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -1604,6 +1634,8 @@ snapshots:
 
   argparse@2.0.1: {}
 
+  array.dedup@0.3.2: {}
+
   balanced-match@1.0.2: {}
 
   brace-expansion@1.1.12:
@@ -1634,6 +1666,13 @@ snapshots:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+
+  class-lib@0.2.1:
+    dependencies:
+      array.dedup: 0.3.2
+      get-safe-reg: 0.7.0
+      reshow-constant: 0.18.0
+      reshow-runtime: 0.17.15
 
   color-convert@2.0.1:
     dependencies:
@@ -1816,6 +1855,8 @@ snapshots:
 
   gensync@1.0.0-beta.2: {}
 
+  get-safe-reg@0.7.0: {}
+
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -1962,6 +2003,12 @@ snapshots:
   react-refresh@0.17.0: {}
 
   react@19.1.0: {}
+
+  reshow-constant@0.18.0: {}
+
+  reshow-runtime@0.17.15:
+    dependencies:
+      reshow-constant: 0.18.0
 
   resolve-from@4.0.0: {}
 
