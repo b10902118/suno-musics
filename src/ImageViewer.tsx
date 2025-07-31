@@ -62,7 +62,18 @@ export default function ImageViewer({
       canvas.width = targetWidth;
       canvas.height = targetHeight;
 
-      await picaInstance.resize(img, canvas);
+      try {
+        await picaInstance.resize(img, canvas);
+      } catch (picaError) {
+        // Fallback: use native canvas 2D drawImage
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+        } else {
+          console.error("Canvas 2D context not available for fallback resize.");
+          throw picaError;
+        }
+      }
 
       canvas.toBlob(
         (blob) => {
