@@ -17,7 +17,7 @@ export default function ImageGallery({ genre }) {
   const [imageDims, setImageDims] = useState<ImageDims>({});
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}/${genre}.json`)
+    fetch(`${import.meta.env.BASE_URL}${genre}.json`)
       .then((res) => res.json())
       .then((data) =>
         setImages(
@@ -62,38 +62,79 @@ export default function ImageGallery({ genre }) {
   return (
     <div className="h-screen w-screen bg-gray-50">
       {/* Gallery Grid - Always two columns */}
-      <div className="columns-2 gap-1 space-y-1 py-2 px-2 overflow-y-auto">
-        {images.map((image) => (
-          <div
-            key={image.id}
-            className={mixClass(
-              "preview-box",
-              getAspectClass(image.id),
-              "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 break-inside-avoid"
-            )}
-            onClick={() => handleImageClick(image)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleImageClick(image);
-            }}
-            tabIndex={0}
-          >
-            <img
-              src={image.url}
-              loading="lazy"
-              className="object-cover w-full h-full"
-              onLoad={(e) => {
-                const img = e.currentTarget;
-                setImageDims((dims) => ({
-                  ...dims,
-                  [image.id]: {
-                    width: img.naturalWidth,
-                    height: img.naturalHeight,
-                  },
-                }));
-              }}
-            />
-          </div>
-        ))}
+      <div className="flex gap-1 py-2 px-2 overflow-y-auto h-full">
+        {/* Left Column */}
+        <div className="flex-1">
+          {images
+            .filter((_, i) => i % 2 === 0)
+            .map((image) => (
+              <div
+                key={image.id}
+                className={mixClass(
+                  "preview-box",
+                  getAspectClass(image.id),
+                  "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 mb-1"
+                )}
+                onClick={() => handleImageClick(image)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleImageClick(image);
+                }}
+                tabIndex={0}
+              >
+                <img
+                  src={image.url}
+                  loading="lazy"
+                  className="object-cover w-full h-full"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    setImageDims((dims) => ({
+                      ...dims,
+                      [image.id]: {
+                        width: img.naturalWidth,
+                        height: img.naturalHeight,
+                      },
+                    }));
+                  }}
+                />
+              </div>
+            ))}
+        </div>
+        {/* Right Column */}
+        <div className="flex-1 gap-1">
+          {images
+            .filter((_, i) => i % 2 === 1)
+            .map((image) => (
+              <div
+                key={image.id}
+                className={mixClass(
+                  "preview-box",
+                  getAspectClass(image.id),
+                  "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 mb-1"
+                )}
+                onClick={() => handleImageClick(image)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleImageClick(image);
+                }}
+                tabIndex={0}
+              >
+                <img
+                  src={image.url}
+                  loading="lazy"
+                  className="object-cover w-full h-full"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    setImageDims((dims) => ({
+                      ...dims,
+                      [image.id]: {
+                        width: img.naturalWidth,
+                        height: img.naturalHeight,
+                      },
+                    }));
+                  }}
+                />
+              </div>
+            ))}
+        </div>
       </div>
 
       {/* Image Viewer Modal */}
