@@ -55,7 +55,7 @@ export default function ImageGallery({ genre }) {
   // Helper to decide aspect class
   const getAspectClass = (id: number) => {
     const dims = imageDims[id];
-    if (!dims) return "aspect-[4/3]"; // fallback
+    if (!dims) return ""; // "aspect-[3/4]"; // zooming effect
     return dims.width > dims.height ? "aspect-[4/3]" : "aspect-[3/4]";
   };
 
