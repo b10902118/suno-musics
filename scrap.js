@@ -53,6 +53,11 @@ async function fetchAndParse(category) {
   const dir = `./public/images/${genre}`;
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
+  } else {
+    const files = readdirSync(dir);
+    for (const file of files) {
+      unlinkSync(join(dir, file));
+    }
   }
 
   const catalog = [];
