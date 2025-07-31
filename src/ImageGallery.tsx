@@ -17,10 +17,15 @@ export default function ImageGallery({ genre }) {
   const [imageDims, setImageDims] = useState<ImageDims>({});
 
   useEffect(() => {
-    fetch(`/${genre}.json`)
+    fetch(`${import.meta.env}/${genre}.json`)
       .then((res) => res.json())
       .then((data) =>
-        setImages(data.map((item, idx) => ({ id: idx, url: item.url })))
+        setImages(
+          data.map((item, idx) => ({
+            id: idx,
+            url: import.meta.env.BASE_URL + item.url,
+          }))
+        )
       );
   }, []);
 

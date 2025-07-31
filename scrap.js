@@ -50,7 +50,7 @@ async function fetchAndParse(category) {
         const filePath = join(dir, `${i}.jpg`); // assume all jpg
         await streamPipeline(res.body, createWriteStream(filePath));
         // push if succ
-        catalog.push({ url: `/images/${genre}/${i}.jpg` });
+        catalog.push({ url: `images/${genre}/${i}.jpg` });
       } catch (e) {
         console.error(`Error downloading ${imgUrl}: ${e.message}`);
       }
