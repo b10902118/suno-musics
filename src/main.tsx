@@ -39,8 +39,28 @@ function GalleryRoutes() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <GalleryRoutes />
-  </BrowserRouter>
-);
+if (import.meta.env.DEV) {
+  // prevent HMR rerun createRoot
+  const container = document.getElementById("root")!;
+
+  // @ts-ignore
+  let root = (window as any).__root;
+
+  if (!root) {
+    root = createRoot(container);
+    // @ts-ignore
+    (window as any).__root = root;
+  }
+
+  root.render(
+    <BrowserRouter>
+      <GalleryRoutes />
+    </BrowserRouter>
+  );
+} else {
+  createRoot(document.getElementById("root")!).render(
+    <BrowserRouter>
+      <GalleryRoutes />
+    </BrowserRouter>
+  );
+}
