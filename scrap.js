@@ -1,19 +1,26 @@
 import { JSDOM } from "jsdom";
-import { writeFileSync } from "fs";
+import { readFileSync, writeFileSync, readdirSync, unlinkSync } from "fs";
 import { mkdirSync, existsSync, createWriteStream } from "fs";
 import { join } from "path";
-import { pipeline } from "stream";
-import { promisify } from "util";
+import axios from "axios";
 
-async function fetchWithTimeout(url, options = {}, timeout = 10000) {
-  const res = await fetch(url, {
+async function getWithTimeout(url, options = {}, timeout = 10000) {
+  const res = await axios.get(url, {
     ...options,
-    signal: AbortSignal.timeout(timeout),
+    timeout,
   });
-  return res;
+  return res.data;
 }
 
-const categories = [{ genre: "popular", q: "" }];
+function getCategories() {
+  const genres = JSON.parse(readFileSync("./public/genres.json", "utf-8"));
+  return genres.map((genre) => ({
+    genre,
+    q: genre === "popular" ? "" : genre,
+  }));
+}
+
+const categories = getCategories();
 
 async function retry(f, n = 3) {
   let attempt = 0;
@@ -36,12 +43,11 @@ async function fetchAndParse(category) {
 
   const fetchPage = async (attempt = 0) => {
     console.log(`Attempt ${attempt + 1}: Fetching ${url}`);
-    const res = await fetchWithTimeout(url);
-    const json = await res.json();
-    if (!json.data) {
+    const data = await getWithTimeout(url);
+    if (!data) {
       throw new Error("no data");
     }
-    return json;
+    return data;
   };
   const json = await fetchPage(); // retry(fetchPage);
 
@@ -49,7 +55,6 @@ async function fetchAndParse(category) {
   const images = [...dom.window.document.querySelectorAll("img")];
   const ImgUrls = images.map((img) => img.src);
 
-  const streamPipeline = promisify(pipeline);
   const dir = `./public/images/${genre}`;
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
@@ -62,10 +67,9 @@ async function fetchAndParse(category) {
 
   const catalog = [];
   const fetchImage = async (imgUrl, i, attempt = 0) => {
-    const res = await fetchWithTimeout(imgUrl);
-    if (!res.ok) throw new Error(`Failed to fetch image: ${imgUrl}`);
+    const data = await getWithTimeout(imgUrl, { responseType: "stream" });
     const filePath = join(dir, `${i}.jpg`); // assume all jpg
-    await streamPipeline(res.body, createWriteStream(filePath));
+    data.pipe(createWriteStream(filePath));
     // push if succ
     catalog.push({ url: `images/${genre}/${i}.jpg` });
   };
