@@ -98,10 +98,7 @@ export default function ImageViewer({
   }
 
   return (
-    <div
-      className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex justify-center z-50"
-      onClick={onClose}
-    >
+    <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex justify-center z-50">
       {/*
       <h3 className="absolute z-10 top-0 left-0 w-full text-xl text-white font-normal px-4 py-2 bg-gradient-to-b from-black/70 to-transparent">
         {selectedImage.title}
