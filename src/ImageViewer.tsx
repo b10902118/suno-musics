@@ -7,10 +7,8 @@ const picaInstance = pica();
 export default function ImageViewer({
   selectedImage,
   onClose,
-  /*
   nextImage,
   prevImage,
-  */
 }) {
   const imgRef = useRef(null);
 
@@ -28,13 +26,12 @@ export default function ImageViewer({
     };
   }, []); // no dependency to prevent rerender trigger cleanup
 
-  /*
   useEffect(() => {
     const handleLeftRightArrow = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft" && !e.altKey) {
         console.log("prevImage");
         prevImage();
-      } else if (e.key === "ArrowRight") {
+      } else if (e.key === "ArrowRight" && !e.altKey) {
         console.log("nextImage");
         nextImage();
       }
@@ -44,7 +41,6 @@ export default function ImageViewer({
       window.removeEventListener("keydown", handleLeftRightArrow);
     };
   }, [nextImage, prevImage]);
-  */
 
   async function downloadImage(img: HTMLImageElement, filename: string) {
     try {

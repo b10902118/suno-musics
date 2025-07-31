@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ImageViewer from "./ImageViewer";
 import { mixClass } from "class-lib";
 
@@ -15,6 +15,10 @@ export default function ImageGallery({ genre }) {
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [selectedImageIdx, setSelectedImageIdx] = useState<number | null>(null);
   const [imageDims, setImageDims] = useState<ImageDims>({});
+
+  // for focus on viwer close
+  const selectedImageIdxRef = useRef(null);
+  selectedImageIdxRef.current = selectedImageIdx;
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}${genre}.json`)
@@ -41,13 +45,10 @@ export default function ImageGallery({ genre }) {
   };
 
   const closeModal = () => {
-    /* FIXME: Needed for next/prev image in viewer
-    const div = document.querySelectorAll(".preview-box")[selectedImageIdx] as
-      | HTMLElement
-      | undefined;
-    console.log(div);
+    const div = document.querySelector(
+      `.preview-box[data-id="${selectedImageIdxRef.current}"]`
+    ) as HTMLElement | null;
     if (div) div.focus();
-    */
 
     setSelectedImageIdx(null);
   };
@@ -63,78 +64,49 @@ export default function ImageGallery({ genre }) {
     <div className="h-screen w-screen bg-gray-50">
       {/* Gallery Grid - Always two columns */}
       <div className="flex gap-1 py-2 px-2 overflow-y-auto h-full">
-        {/* Left Column */}
-        <div className="flex-1">
-          {images
-            .filter((_, i) => i % 2 === 0)
-            .map((image) => (
-              <div
-                key={image.id}
-                className={mixClass(
-                  "preview-box",
-                  getAspectClass(image.id),
-                  "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 mb-1"
-                )}
-                onClick={() => handleImageClick(image)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleImageClick(image);
-                }}
-                tabIndex={0}
-              >
-                <img
-                  src={image.url}
-                  loading="lazy"
-                  className="object-cover w-full h-full"
-                  onLoad={(e) => {
-                    const img = e.currentTarget;
-                    setImageDims((dims) => ({
-                      ...dims,
-                      [image.id]: {
-                        width: img.naturalWidth,
-                        height: img.naturalHeight,
-                      },
-                    }));
-                  }}
-                />
-              </div>
-            ))}
-        </div>
-        {/* Right Column */}
-        <div className="flex-1 gap-1">
-          {images
-            .filter((_, i) => i % 2 === 1)
-            .map((image) => (
-              <div
-                key={image.id}
-                className={mixClass(
-                  "preview-box",
-                  getAspectClass(image.id),
-                  "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 mb-1"
-                )}
-                onClick={() => handleImageClick(image)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleImageClick(image);
-                }}
-                tabIndex={0}
-              >
-                <img
-                  src={image.url}
-                  loading="lazy"
-                  className="object-cover w-full h-full"
-                  onLoad={(e) => {
-                    const img = e.currentTarget;
-                    setImageDims((dims) => ({
-                      ...dims,
-                      [image.id]: {
-                        width: img.naturalWidth,
-                        height: img.naturalHeight,
-                      },
-                    }));
-                  }}
-                />
-              </div>
-            ))}
-        </div>
+        {/* Two Columns */}
+        {[0, 1].map((col) => (
+          <div key={col} className="flex-1">
+            {images
+              .filter((_, i) => i % 2 === col)
+              .map((image) => (
+                <div
+                  key={image.id}
+                  data-id={image.id}
+                  className={mixClass(
+                    "preview-box",
+                    getAspectClass(image.id),
+                    "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 mb-1"
+                  )}
+                  onClick={() => handleImageClick(image)}
+                  onKeyDown={
+                    selectedImageIdx === null
+                      ? (e) => {
+                          if (e.key === "Enter") handleImageClick(image);
+                        }
+                      : undefined
+                  }
+                  tabIndex={0}
+                >
+                  <img
+                    src={image.url}
+                    loading="lazy"
+                    className="object-cover w-full h-full"
+                    onLoad={(e) => {
+                      const img = e.currentTarget;
+                      setImageDims((dims) => ({
+                        ...dims,
+                        [image.id]: {
+                          width: img.naturalWidth,
+                          height: img.naturalHeight,
+                        },
+                      }));
+                    }}
+                  />
+                </div>
+              ))}
+          </div>
+        ))}
       </div>
 
       {/* Image Viewer Modal */}
@@ -142,11 +114,6 @@ export default function ImageGallery({ genre }) {
         <ImageViewer
           selectedImage={images[selectedImageIdx]}
           onClose={closeModal}
-        />
-      )}
-      {/*
-          // FIXME: next is in the same column
-          // can't know item at which column
           nextImage={() =>
             setSelectedImageIdx((prev) => (prev + 1) % images.length)
           }
@@ -155,7 +122,8 @@ export default function ImageGallery({ genre }) {
               (prev) => (prev - 1 + images.length) % images.length
             )
           }
-        */}
+        />
+      )}
     </div>
   );
 }
