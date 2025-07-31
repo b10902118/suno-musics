@@ -17,7 +17,7 @@ export default function ImageGallery({ genre }) {
   const [imageDims, setImageDims] = useState<ImageDims>({});
 
   useEffect(() => {
-    fetch(`${import.meta.env}/${genre}.json`)
+    fetch(`${import.meta.env.BASE_URL}/${genre}.json`)
       .then((res) => res.json())
       .then((data) =>
         setImages(
