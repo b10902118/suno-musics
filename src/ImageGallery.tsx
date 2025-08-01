@@ -61,7 +61,7 @@ export default function ImageGallery({ genre }) {
   };
 
   return (
-    <div className="h-screen w-screen bg-gray-50">
+    <div className="h-full w-full bg-gray-50">
       {/* Gallery Grid - Always two columns */}
       <div className="flex gap-1 py-2 px-2 overflow-y-auto h-full">
         {/* Two Columns */}
