@@ -1,6 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import ImageViewer from "./ImageViewer";
 import { mixClass } from "class-lib";
+import { useFooterStore } from "./store";
+import { useNavigate } from "react-router-dom";
 
 interface ImageInfo {
   id: number;
@@ -15,10 +17,19 @@ export default function ImageGallery({ genre }) {
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [selectedImageIdx, setSelectedImageIdx] = useState<number | null>(null);
   const [imageDims, setImageDims] = useState<ImageDims>({});
+  const { setGallery, setMenu } = useFooterStore.getState();
+  const navigate = useNavigate();
 
   // for focus on viwer close
   const selectedImageIdxRef = useRef(null);
   selectedImageIdxRef.current = selectedImageIdx;
+
+  useEffect(() => {
+    setGallery(genre, () => {
+      setMenu();
+      navigate("/menu"); // didn't find a way to set it at store once
+    });
+  }, [genre]);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}${genre}.json`)
@@ -45,6 +56,7 @@ export default function ImageGallery({ genre }) {
   };
 
   const closeModal = () => {
+    setGallery(genre);
     const div = document.querySelector(
       `.preview-box[data-id="${selectedImageIdxRef.current}"]`
     ) as HTMLElement | null;
@@ -61,12 +73,12 @@ export default function ImageGallery({ genre }) {
   };
 
   return (
-    <div className="h-full w-full bg-gray-50">
+    <div className="relative h-full w-full bg-gray-50">
       {/* Gallery Grid - Always two columns */}
       <div className="flex gap-1 py-2 px-2 overflow-y-auto h-full">
         {/* Two Columns */}
         {[0, 1].map((col) => (
-          <div key={col} className="flex-1">
+          <div key={col} className="flex-1 space-y-1">
             {images
               .filter((_, i) => i % 2 === col)
               .map((image) => (
@@ -76,7 +88,7 @@ export default function ImageGallery({ genre }) {
                   className={mixClass(
                     "preview-box",
                     getAspectClass(image.id),
-                    "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500 mb-1"
+                    "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500"
                   )}
                   onClick={() => handleImageClick(image)}
                   onKeyDown={
@@ -105,6 +117,7 @@ export default function ImageGallery({ genre }) {
                   />
                 </div>
               ))}
+            <div className="h-2" /> {/* bottom padding */}
           </div>
         ))}
       </div>

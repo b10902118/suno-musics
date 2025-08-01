@@ -4,25 +4,42 @@ import { useEffect } from "react";
 import { mixClass } from "class-lib";
 import {
   ArrowDownTrayIcon,
+  Bars3Icon,
+  HeartIcon as HeartIconSolid,
   ArrowLongLeftIcon,
 } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
+import { useFooterStore } from "./store";
 
-export default function Footer({ onDownload, onBack }) {
+export default function Footer() {
+  const { status, onSL, centerText, onEnter } = useFooterStore();
+
+  // Choose icon based on status
+  const SLIcon =
+    status === "gallery"
+      ? Bars3Icon
+      : status === "viewer"
+      ? ArrowDownTrayIcon
+      : null;
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onDownload();
+        onSL();
+      }
+      if (e.key === "Enter") {
+        onEnter();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onDownload]);
+  }, [onSL, onEnter]);
 
   return (
     <footer
       dir="ltr"
       className={
-        "fixed bottom-0 z-5000 bg-black pointer-events-none box-border flex w-screen px-1 py-0.5"
+        "flex flex-shrink-0 bg-black pointer-events-none box-border w-screen px-1 py-0.5"
       }
     >
       <div
@@ -30,7 +47,7 @@ export default function Footer({ onDownload, onBack }) {
         tabIndex={-1}
       >
         {/* SL */}
-        {<ArrowDownTrayIcon className="h-6 w-6" onClick={onDownload} />}
+        {SLIcon && <SLIcon className="h-6 w-6" onClick={onSL} />}
       </div>
       <div
         className={mixClass(
@@ -38,13 +55,21 @@ export default function Footer({ onDownload, onBack }) {
         )}
       >
         {/* Enter */}
+        {status === "viewer" ? (
+          <HeartIconOutline className="h-6 w-6 text-white" onClick={onEnter} />
+        ) : status === "gallery" ? (
+          <span className="text-gray-400">{centerText}</span>
+        ) : null}
       </div>
       <div
         className="text-white pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
         tabIndex={-1}
       >
         {/* SR */}
-        <ArrowLongLeftIcon className="h-6 w-6" onClick={onBack} />
+        <ArrowLongLeftIcon
+          className="h-6 w-6"
+          onClick={() => window.history.back()} // controlled with popstate
+        />
       </div>
     </footer>
   );

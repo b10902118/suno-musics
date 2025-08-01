@@ -1,6 +1,6 @@
-import Footer from "./Footer";
 import { useEffect, useRef } from "react";
 import pica from "pica";
+import { useFooterStore } from "./store";
 
 const picaInstance = pica();
 
@@ -10,6 +10,8 @@ export default function ImageViewer({
   nextImage,
   prevImage,
 }) {
+  const { setViewer } = useFooterStore.getState();
+
   const imgRef = useRef(null);
 
   // strict mode will cause issues
@@ -25,14 +27,13 @@ export default function ImageViewer({
       window.history.back();
     };
   }, []); // no dependency to prevent rerender trigger cleanup
+  // onClose cannot be updated, relying on binding ref
 
   useEffect(() => {
     const handleLeftRightArrow = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" && !e.altKey) {
-        console.log("prevImage");
         prevImage();
       } else if (e.key === "ArrowRight" && !e.altKey) {
-        console.log("nextImage");
         nextImage();
       }
     };
@@ -93,8 +94,15 @@ export default function ImageViewer({
     }
   }
 
+  useEffect(() => {
+    setViewer(
+      () => downloadImage(imgRef.current, selectedImage.id.toString()),
+      () => {} // TODO
+    );
+  }, [downloadImage]);
+
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex justify-center z-50">
+    <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center z-50">
       {/*
       <h3 className="absolute z-10 top-0 left-0 w-full text-xl text-white font-normal px-4 py-2 bg-gradient-to-b from-black/70 to-transparent">
         {selectedImage.title}
@@ -105,13 +113,6 @@ export default function ImageViewer({
         src={selectedImage.url}
         className="object-contain max-w-full max-h-full"
         ref={imgRef}
-      />
-
-      <Footer
-        onDownload={() =>
-          downloadImage(imgRef.current, selectedImage.id.toString())
-        }
-        onBack={onClose}
       />
     </div>
   );
