@@ -1,44 +1,77 @@
 import { create } from "zustand";
+import type { ImageInfo } from "./types";
+import downloadImage from "./downloadImage";
+import type { RefObject } from "react";
 
 interface FooterStore {
   status: "menu" | "gallery" | "viewer";
-  onSL: () => void;
+  genre: string | null;
+  favorites: { origin: string }[];
+  addFavorite: (origin: string) => void;
+  removeFavorite: (origin: string) => void;
+  selectedImage: ImageInfo | null;
+  setSelectedImage: (image: ImageInfo | null) => void;
+  onSL: () => void | null;
   centerText: string | null;
-  onEnter: () => void;
   setMenu: () => void;
   setGallery: (genre: string, onSL: () => void) => void;
-  setViewer: (onDownload: () => void, onLike: () => void) => void;
+  setViewer: (imgRef: RefObject<HTMLImageElement>, filename: string) => void;
 }
 
-export const useFooterStore = create<FooterStore>((set) => {
+function getFavorites() {
+  const favJSON = localStorage.getItem("favorite");
+  if (favJSON) {
+    try {
+      return JSON.parse(favJSON);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+export const useFooterStore = create<FooterStore>((set, get) => {
   const setMenu = () => {
     set({
       status: "menu",
-      onSL: () => {},
+      onSL: null,
       centerText: null,
-      onEnter: () => {},
     });
   };
   const setGallery = (genre: string, onMenu: () => void) =>
     set({
       status: "gallery",
+      genre,
       onSL: onMenu,
       centerText: genre,
-      onEnter: () => {},
     });
-  const setViewer = (onDownload: () => void, onLike: () => void) =>
+  const setViewer = (imgRef: RefObject<HTMLImageElement>, filename: string) =>
     set({
       status: "viewer",
-      onSL: onDownload,
+      onSL: () => downloadImage(imgRef, filename),
       centerText: null,
-      onEnter: onLike,
     });
 
   return {
     status: "gallery",
-    onSL: () => {},
+    genre: null,
+    favorites: getFavorites(),
+    addFavorite: (origin) => {
+      const newFavs = [...get().favorites, { origin }];
+      localStorage.setItem("favorite", JSON.stringify(newFavs));
+      set({ favorites: newFavs });
+    },
+    removeFavorite: (origin) => {
+      const newFavs = get().favorites.filter((fav) => fav.origin !== origin);
+      localStorage.setItem("favorite", JSON.stringify(newFavs));
+      set({ favorites: newFavs });
+    },
+    selectedImage: null,
+    setSelectedImage: (image) => {
+      set({ selectedImage: image });
+    },
+    onSL: null,
     centerText: null, // to be set by gallery
-    onEnter: () => {},
     setMenu,
     setGallery,
     setViewer,

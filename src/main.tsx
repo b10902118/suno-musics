@@ -43,6 +43,11 @@ function GalleryRoutes() {
               element={<ImageGallery key={genre} genre={genre} />}
             />
           ))}
+          <Route
+            key="favorite"
+            path={`/favorite`}
+            element={<ImageGallery key="favorite" genre="favorite" />}
+          />
           <Route path="*" element={<div>Not found</div>} />
         </Routes>
       </div>

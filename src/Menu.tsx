@@ -6,6 +6,7 @@ import { capitalize } from "./utils";
 const genre2icon = {
   popular: "🔥",
   nature: "🌎",
+  favorite: "❤️",
 };
 
 export default function Menu({ genres }: { genres: string[] }) {
@@ -23,6 +24,7 @@ export default function Menu({ genres }: { genres: string[] }) {
     if (!firstLink) {
       firstLink = document.querySelector(".menu-link");
     }
+    // @ts-ignore
     firstLink.focus();
   }, []);
   return (
@@ -42,6 +44,14 @@ export default function Menu({ genres }: { genres: string[] }) {
               </Link>
             </li>
           ))}
+          <li key="favorite" className="">
+            <Link
+              to={`/favorite`}
+              className="menu-link block rounded-md px-4 py-3 text-black text-lg font-medium focus:bg-blue-100 focus:text-blue-700 focus:outline-none transition-colors duration-150"
+            >
+              {genre2icon["favorite"]} {capitalize("favorite")}
+            </Link>
+          </li>
         </ul>
       </nav>
     </div>

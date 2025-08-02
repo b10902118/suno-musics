@@ -1,8 +1,5 @@
 import { useEffect, useRef } from "react";
-import pica from "pica";
 import { useFooterStore } from "./store";
-
-const picaInstance = pica();
 
 export default function ImageViewer({
   selectedImage,
@@ -12,7 +9,7 @@ export default function ImageViewer({
 }) {
   const { setViewer } = useFooterStore.getState();
 
-  const imgRef = useRef(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   // strict mode will cause issues
   useEffect(() => {
@@ -43,63 +40,9 @@ export default function ImageViewer({
     };
   }, [nextImage, prevImage]);
 
-  async function downloadImage(img: HTMLImageElement, filename: string) {
-    try {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      const ratio =
-        Math.max(viewportWidth, viewportHeight) /
-        Math.max(img.naturalWidth, img.naturalHeight);
-
-      const targetWidth = Math.round(img.naturalWidth * ratio);
-      const targetHeight = Math.round(img.naturalHeight * ratio);
-
-      const canvas = document.createElement("canvas");
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
-      try {
-        await picaInstance.resize(img, canvas);
-      } catch (picaError) {
-        // Fallback: use native canvas 2D drawImage
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-        } else {
-          console.error("Canvas 2D context not available for fallback resize.");
-          throw picaError;
-        }
-      }
-
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            console.error("downloadImage: canvas toBlob failed");
-            return;
-          }
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = filename + ".jpg";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(link.href);
-        },
-        "image/jpeg",
-        0.95
-      );
-    } catch (error) {
-      console.error("Download failed:", error);
-    }
-  }
-
   useEffect(() => {
-    setViewer(
-      () => downloadImage(imgRef.current, selectedImage.id.toString()),
-      () => {} // TODO
-    );
-  }, [downloadImage]);
+    setViewer(imgRef, selectedImage.id.toString());
+  }, [selectedImage]);
 
   return (
     <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center z-50">

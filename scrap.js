@@ -53,6 +53,7 @@ async function fetchAndParse(category) {
 
   const dom = new JSDOM(json.data);
   const images = [...dom.window.document.querySelectorAll("img")];
+
   const ImgUrls = images.map((img) => img.src);
 
   const dir = `./public/images/${genre}`;
@@ -71,7 +72,7 @@ async function fetchAndParse(category) {
     const filePath = join(dir, `${i}.jpg`); // assume all jpg
     data.pipe(createWriteStream(filePath));
     // push if succ
-    catalog.push({ url: `images/${genre}/${i}.jpg` });
+    catalog.push({ url: `images/${genre}/${i}.jpg`, origin: imgUrl });
   };
 
   await Promise.all(

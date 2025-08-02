@@ -3,11 +3,7 @@ import ImageViewer from "./ImageViewer";
 import { mixClass } from "class-lib";
 import { useFooterStore } from "./store";
 import { useNavigate } from "react-router-dom";
-
-interface ImageInfo {
-  id: number;
-  url: string;
-}
+import type { ImageInfo } from "./types";
 
 interface ImageDims {
   [id: number]: { width: number; height: number };
@@ -15,14 +11,21 @@ interface ImageDims {
 
 export default function ImageGallery({ genre }) {
   const [images, setImages] = useState<ImageInfo[]>([]);
-  const [selectedImageIdx, setSelectedImageIdx] = useState<number | null>(null);
   const [imageDims, setImageDims] = useState<ImageDims>({});
-  const { setGallery } = useFooterStore.getState();
+  const { favorites } = useFooterStore();
+  const { setGallery, setSelectedImage } = useFooterStore.getState();
   const navigate = useNavigate();
 
-  // for focus on viwer close
-  const selectedImageIdxRef = useRef(null);
+  // index must be state to trigger re-execution
+  const [selectedImageIdx, setSelectedImageIdx] = useState<number | null>(null);
+  const selectedImageIdxRef = useRef<number | null>(null);
+  // keep closeModel updated, for viewer no dependency useEffect
   selectedImageIdxRef.current = selectedImageIdx;
+  useEffect(() => {
+    setSelectedImage(
+      selectedImageIdx !== null ? images[selectedImageIdx] : null
+    );
+  }, [selectedImageIdx, images]);
 
   // didn't find a way to set it at store once
   const onGallerySL = () => {
@@ -34,16 +37,40 @@ export default function ImageGallery({ genre }) {
   }, [genre]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}${genre}.json`)
-      .then((res) => res.json())
-      .then((data) =>
-        setImages(
-          data.map((item, idx) => ({
-            id: idx,
-            url: import.meta.env.BASE_URL + item.url,
-          }))
-        )
-      );
+    if (genre === "favorite") {
+      const favs = localStorage.getItem("favorite");
+      if (favs) {
+        try {
+          const data = JSON.parse(favs);
+          setImages(
+            data.map((item, idx) => ({
+              id: idx,
+              url: item.origin,
+              ...item,
+            }))
+          );
+        } catch (e) {
+          setImages([]);
+        }
+      }
+    }
+  }, []);
+  // FIXME: sync with favorite will change gallery while viewing
+  // now relying on refresh
+
+  useEffect(() => {
+    if (genre !== "favorite") {
+      fetch(`${import.meta.env.BASE_URL}${genre}.json`)
+        .then((res) => res.json())
+        .then((data) =>
+          setImages(
+            data.map((item, idx) => ({
+              id: idx,
+              ...item,
+            }))
+          )
+        );
+    }
   }, []);
 
   useEffect(() => {
@@ -127,7 +154,7 @@ export default function ImageGallery({ genre }) {
       {/* Image Viewer Modal */}
       {selectedImageIdx !== null && (
         <ImageViewer
-          selectedImage={images[selectedImageIdx]}
+          selectedImage={images[selectedImageIdx]} // not global, which is slower
           onClose={closeModal}
           nextImage={() =>
             setSelectedImageIdx((prev) => (prev + 1) % images.length)
