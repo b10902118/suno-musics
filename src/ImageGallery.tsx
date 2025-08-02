@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import ImageViewer from "./ImageViewer";
 import { mixClass } from "class-lib";
 import { useFooterStore } from "./store";
@@ -17,18 +17,20 @@ export default function ImageGallery({ genre }) {
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [selectedImageIdx, setSelectedImageIdx] = useState<number | null>(null);
   const [imageDims, setImageDims] = useState<ImageDims>({});
-  const { setGallery, setMenu } = useFooterStore.getState();
+  const { setGallery } = useFooterStore.getState();
   const navigate = useNavigate();
 
   // for focus on viwer close
   const selectedImageIdxRef = useRef(null);
   selectedImageIdxRef.current = selectedImageIdx;
 
+  // didn't find a way to set it at store once
+  const onGallerySL = () => {
+    navigate(`/menu#${genre}`);
+  };
+
   useEffect(() => {
-    setGallery(genre, () => {
-      setMenu();
-      navigate("/menu"); // didn't find a way to set it at store once
-    });
+    setGallery(genre, onGallerySL);
   }, [genre]);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function ImageGallery({ genre }) {
   };
 
   const closeModal = () => {
-    setGallery(genre);
+    setGallery(genre, onGallerySL);
     const div = document.querySelector(
       `.preview-box[data-id="${selectedImageIdxRef.current}"]`
     ) as HTMLElement | null;
@@ -73,7 +75,7 @@ export default function ImageGallery({ genre }) {
   };
 
   return (
-    <div className="relative h-full w-full bg-gray-50">
+    <div className="relative h-full w-full bg-gray-100">
       {/* Gallery Grid - Always two columns */}
       <div className="flex gap-1 py-2 px-2 overflow-y-auto h-full">
         {/* Two Columns */}

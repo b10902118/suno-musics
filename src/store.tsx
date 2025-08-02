@@ -12,7 +12,12 @@ interface FooterStore {
 
 export const useFooterStore = create<FooterStore>((set) => {
   const setMenu = () => {
-    set({ status: "menu", onSL: () => {}, centerText: null, onEnter: null });
+    set({
+      status: "menu",
+      onSL: () => {},
+      centerText: null,
+      onEnter: () => {},
+    });
   };
   const setGallery = (genre: string, onMenu: () => void) =>
     set({

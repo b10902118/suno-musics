@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { useFooterStore } from "./store";
+import { capitalize } from "./utils";
 
 export default function Footer() {
   const { status, onSL, centerText, onEnter } = useFooterStore();
@@ -39,11 +40,11 @@ export default function Footer() {
     <footer
       dir="ltr"
       className={
-        "flex flex-shrink-0 bg-black pointer-events-none box-border w-screen px-1 py-0.5"
+        "flex flex-shrink-0 bg-black pointer-events-none box-border w-screen px-1 py-0.5 text-white"
       }
     >
       <div
-        className="text-white pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
+        className="pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
         tabIndex={-1}
       >
         {/* SL */}
@@ -56,13 +57,13 @@ export default function Footer() {
       >
         {/* Enter */}
         {status === "viewer" ? (
-          <HeartIconOutline className="h-6 w-6 text-white" onClick={onEnter} />
+          <HeartIconOutline className="h-6 w-6" onClick={onEnter} />
         ) : status === "gallery" ? (
-          <span className="text-gray-400">{centerText}</span>
+          <span className="text-gray-300">{capitalize(centerText)}</span>
         ) : null}
       </div>
       <div
-        className="text-white pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
+        className="pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
         tabIndex={-1}
       >
         {/* SR */}
