@@ -59,50 +59,43 @@ export default function Footer() {
     };
   }, [onSL, onEnter]);
 
+  const iconClassName =
+    "h-[7.5vh] aspect-square pointer-events-auto cursor-pointer";
+
   return (
     <footer
       dir="ltr"
-      className={
-        "flex flex-shrink-0 bg-black pointer-events-none box-border w-screen px-1 py-0.5 text-white"
-      }
+      className="flex flex-shrink-0 bg-black pointer-events-none box-border w-screen px-[2vw] py-[0.5vh] text-white"
     >
-      <div
-        className="pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
-        tabIndex={-1}
-      >
+      <div className="flex items-center justify-center">
         {/* SL */}
         {SLIcon ? (
-          <SLIcon className="h-6 w-6" onClick={onSL} />
+          <SLIcon className={iconClassName} onClick={onSL} />
         ) : (
-          <div className="h-6 w-6" />
+          <div className="h-[7.5vh] aspect-square" />
         )}
       </div>
-      <div
-        className={mixClass(
-          "relative grow pointer-events-auto cursor-pointer overflow-hidden whitespace-nowrap text-center font-bold gap-2 flex justify-center items-center"
-        )}
-      >
+      <div className="flex justify-center items-center text-center grow overflow-hidden whitespace-nowrap font-bold">
         {/* Enter */}
         {status === "viewer" ? (
           isFavorite ? (
             <HeartIconSolid
-              className="h-6 w-6 text-red-500"
+              className={mixClass(iconClassName, "text-red-500")}
               onClick={onEnter}
             />
           ) : (
-            <HeartIconOutline className="h-6 w-6" onClick={onEnter} />
+            <HeartIconOutline className={iconClassName} onClick={onEnter} />
           )
         ) : status === "gallery" ? (
-          <span className="text-gray-300">{capitalize(centerText)}</span>
+          <span className="text-[5vh] text-gray-300 cursor-pointer">
+            {capitalize(centerText)}
+          </span>
         ) : null}
       </div>
-      <div
-        className="pointer-events-auto flex cursor-pointer items-center justify-center outline-none"
-        tabIndex={-1}
-      >
+      <div className="flex items-center justify-center">
         {/* SR */}
         <ArrowLongLeftIcon
-          className="h-6 w-6"
+          className={iconClassName}
           onClick={() => window.history.back()} // controlled with popstate
         />
       </div>

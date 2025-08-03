@@ -61,12 +61,6 @@ export default function ImageViewer({
 
   return (
     <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center z-50">
-      {/*
-      <h3 className="absolute z-10 top-0 left-0 w-full text-xl text-white font-normal px-4 py-2 bg-gradient-to-b from-black/70 to-transparent">
-        {selectedImage.title}
-      </h3>
-        */}
-
       <img
         src={selectedImage.url}
         className="object-contain max-w-full max-h-full"

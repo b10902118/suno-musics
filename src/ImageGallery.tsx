@@ -103,7 +103,7 @@ export default function ImageGallery({ genre }) {
   return (
     <div className="relative h-full w-full bg-gray-100">
       {/* Gallery Grid - Always two columns */}
-      <div className="flex gap-1 py-2 px-2 overflow-y-auto h-full">
+      <div className="flex gap-1 py-[3vh] px-[3vw] overflow-y-auto h-full">
         {/* Two Columns */}
         {[0, 1].map((col) => (
           <div key={col} className="flex-1 space-y-1">
@@ -145,7 +145,7 @@ export default function ImageGallery({ genre }) {
                   />
                 </div>
               ))}
-            <div className="h-2" /> {/* bottom padding */}
+            <div className="h-[3vh]" /> {/* bottom padding */}
           </div>
         ))}
       </div>
