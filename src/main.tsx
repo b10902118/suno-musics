@@ -8,25 +8,12 @@ import Menu from "./Menu";
 
 function GalleryRoutes() {
   const [genres, setGenres] = useState<string[]>([]);
-  //const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     fetch("/genres.json")
       .then((res) => res.json())
       .then(setGenres);
   }, []);
-
-  // Toggle menu with Escape key
-  // TODO: least precedence
-  /*
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen((open) => !open);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-  */
 
   if (genres.length === 0) return <div>Loading...</div>;
 
