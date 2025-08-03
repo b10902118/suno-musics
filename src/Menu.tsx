@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useFooterStore } from "./store";
 import { capitalize } from "./utils";
@@ -12,6 +12,7 @@ const genre2icon = {
 export default function Menu({ genres }: { genres: string[] }) {
   const { setMenu } = useFooterStore.getState();
   const location = useLocation();
+  const navigate = useNavigate();
   useEffect(() => {
     setMenu();
   }, []);
@@ -19,16 +20,22 @@ export default function Menu({ genres }: { genres: string[] }) {
   useEffect(() => {
     // Focus on the link of the hash genre, if none, focus on the first link
     const hashGenre = location.hash.slice(1);
-    let firstLink = document.querySelector(`.menu-link[href="/${hashGenre}"]`);
+    let firstLink = document.querySelector(
+      `.menu-button[data-genre="${hashGenre}"]`
+    );
     if (!firstLink) {
-      firstLink = document.querySelector(".menu-link");
+      firstLink = document.querySelector(".menu-button");
     }
     // @ts-ignore
     firstLink.focus();
   }, []);
 
+  const handleNav = (genre: string) => {
+    navigate(`/${genre}`, { replace: true });
+  };
+
   const linkClassName =
-    "menu-link block rounded-md px-[3vw] py-[3vh] text-black text-[8vw] font-medium focus:bg-blue-100 focus:text-blue-700 focus:outline-none transition-colors duration-150";
+    "menu-button block w-full text-start rounded-md px-[3vw] py-[3vh] text-black text-[8vw] focus:bg-blue-100 focus:text-blue-700 focus:outline-none transition-colors duration-150";
   return (
     <div className="h-full w-full flex items-start justify-start bg-white">
       <nav
@@ -36,18 +43,28 @@ export default function Menu({ genres }: { genres: string[] }) {
         onClick={(e) => e.stopPropagation()}
       >
         <ul className="flex flex-col gap-[2vh]">
+          <li key="favorite" className="">
+            <button
+              type="button"
+              data-genre="favorite"
+              className={linkClassName}
+              onClick={() => handleNav("favorite")}
+            >
+              {genre2icon["favorite"]} {capitalize("favorite")}
+            </button>
+          </li>
           {genres.map((genre) => (
             <li key={genre}>
-              <Link to={`/${genre}`} className={linkClassName}>
+              <button
+                type="button"
+                data-genre={genre}
+                className={linkClassName}
+                onClick={() => handleNav(genre)}
+              >
                 {genre2icon[genre]} {capitalize(genre)}
-              </Link>
+              </button>
             </li>
           ))}
-          <li key="favorite" className="">
-            <Link to={`/favorite`} className={linkClassName}>
-              {genre2icon["favorite"]} {capitalize("favorite")}
-            </Link>
-          </li>
         </ul>
       </nav>
     </div>
