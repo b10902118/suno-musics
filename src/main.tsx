@@ -32,7 +32,7 @@ function GalleryRoutes() {
           ))}
           <Route
             key="favorite"
-            path={`/favorite`}
+            path="/favorite"
             element={<ImageGallery key="favorite" genre="favorite" />}
           />
           <Route path="*" element={<div>Not found</div>} />
@@ -58,13 +58,13 @@ if (import.meta.env.DEV) {
   }
 
   root.render(
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <GalleryRoutes />
     </BrowserRouter>
   );
 } else {
   createRoot(document.getElementById("root")!).render(
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <GalleryRoutes />
     </BrowserRouter>
   );
