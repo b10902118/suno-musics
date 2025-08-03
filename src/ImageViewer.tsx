@@ -1,12 +1,22 @@
 import { useEffect, useRef } from "react";
 import { useFooterStore } from "./store";
+import type { ImageInfo } from "./types";
+
+interface ImageViewerProps {
+  genre: string;
+  selectedImage: ImageInfo;
+  onClose: () => void;
+  nextImage: () => void;
+  prevImage: () => void;
+}
 
 export default function ImageViewer({
+  genre,
   selectedImage,
   onClose,
   nextImage,
   prevImage,
-}) {
+}: ImageViewerProps) {
   const { setViewer } = useFooterStore.getState();
 
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -41,7 +51,12 @@ export default function ImageViewer({
   }, [nextImage, prevImage]);
 
   useEffect(() => {
-    setViewer(imgRef, selectedImage.id.toString());
+    const captions =
+      selectedImage.tags.length >= 3
+        ? selectedImage.tags.slice(3).join("_")
+        : selectedImage.id;
+    const filename = `${genre}-${captions}`;
+    setViewer(imgRef, filename);
   }, [selectedImage]);
 
   return (

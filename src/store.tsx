@@ -6,9 +6,9 @@ import type { RefObject } from "react";
 interface FooterStore {
   status: "menu" | "gallery" | "viewer";
   genre: string | null;
-  favorites: { origin: string }[];
-  addFavorite: (origin: string) => void;
-  removeFavorite: (origin: string) => void;
+  favorites: ImageInfo[];
+  addFavorite: (imgInfo: ImageInfo) => void;
+  removeFavorite: (imgInfo: ImageInfo) => void;
   selectedImage: ImageInfo | null;
   setSelectedImage: (image: ImageInfo | null) => void;
   onSL: () => void | null;
@@ -56,13 +56,16 @@ export const useFooterStore = create<FooterStore>((set, get) => {
     status: "gallery",
     genre: null,
     favorites: getFavorites(),
-    addFavorite: (origin) => {
-      const newFavs = [...get().favorites, { origin }];
+    addFavorite: (imgInfo) => {
+      const info = { ...imgInfo, url: "" };
+      const newFavs = [...get().favorites, info];
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
     },
-    removeFavorite: (origin) => {
-      const newFavs = get().favorites.filter((fav) => fav.origin !== origin);
+    removeFavorite: (imgInfo) => {
+      const newFavs = get().favorites.filter(
+        (fav) => fav.origin !== imgInfo.origin
+      );
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
     },

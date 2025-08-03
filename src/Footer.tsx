@@ -24,9 +24,9 @@ export default function Footer() {
 
   function toggleLike() {
     if (isFavorite) {
-      removeFavorite(selectedImage.origin);
+      removeFavorite(selectedImage);
     } else {
-      addFavorite(selectedImage.origin);
+      addFavorite(selectedImage);
     }
   }
 

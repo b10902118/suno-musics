@@ -54,7 +54,10 @@ async function fetchAndParse(category) {
   const dom = new JSDOM(json.data);
   const images = [...dom.window.document.querySelectorAll("img")];
 
-  const ImgUrls = images.map((img) => img.src);
+  const ImgData = images.map((img) => ({
+    src: img.src,
+    tags: img.title ? img.title.split(",").map((t) => t.trim()) : [],
+  }));
 
   const dir = `./public/images/${genre}`;
   if (!existsSync(dir)) {
@@ -71,16 +74,20 @@ async function fetchAndParse(category) {
     const data = await getWithTimeout(imgUrl, { responseType: "stream" });
     const filePath = join(dir, `${i}.jpg`); // assume all jpg
     data.pipe(createWriteStream(filePath));
-    // push if succ
-    catalog.push({ url: `images/${genre}/${i}.jpg`, origin: imgUrl });
   };
 
   await Promise.all(
-    ImgUrls.map(async (imgUrl, i) => {
+    ImgData.map(async (imgDatum, i) => {
       try {
-        await fetchImage(imgUrl, i); //retry(fetchImage.bind(null, imgUrl, i));
+        await fetchImage(imgDatum.src, i); //retry(fetchImage.bind(null, imgUrl, i));
+        // push if succ
+        catalog.push({
+          url: `images/${genre}/${i}.jpg`,
+          origin: imgDatum.src,
+          tags: imgDatum.tags,
+        });
       } catch (e) {
-        console.error(`Error downloading ${imgUrl}: ${e.message}`);
+        console.error(`Error downloading ${imgDatum.src}: ${e.message}`);
       }
     })
   );

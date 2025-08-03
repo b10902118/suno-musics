@@ -12,9 +12,10 @@ export default async function downloadImage(
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    const ratio =
-      Math.max(viewportWidth, viewportHeight) /
-      Math.max(img.naturalWidth, img.naturalHeight);
+    const ratio = Math.max(
+      viewportWidth / img.naturalWidth,
+      viewportHeight / img.naturalHeight
+    );
 
     const targetWidth = Math.round(img.naturalWidth * ratio);
     const targetHeight = Math.round(img.naturalHeight * ratio);

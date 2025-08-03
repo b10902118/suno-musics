@@ -12,7 +12,6 @@ interface ImageDims {
 export default function ImageGallery({ genre }) {
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [imageDims, setImageDims] = useState<ImageDims>({});
-  const { favorites } = useFooterStore();
   const { setGallery, setSelectedImage } = useFooterStore.getState();
   const navigate = useNavigate();
 
@@ -44,9 +43,9 @@ export default function ImageGallery({ genre }) {
           const data = JSON.parse(favs);
           setImages(
             data.map((item, idx) => ({
+              ...item,
               id: idx,
               url: item.origin,
-              ...item,
             }))
           );
         } catch (e) {
@@ -55,8 +54,8 @@ export default function ImageGallery({ genre }) {
       }
     }
   }, []);
-  // FIXME: sync with favorite will change gallery while viewing
-  // now relying on refresh
+  // sync with favorite will change gallery while viewing
+  // now relying on refresh (good actally)
 
   useEffect(() => {
     if (genre !== "favorite") {
@@ -154,6 +153,7 @@ export default function ImageGallery({ genre }) {
       {/* Image Viewer Modal */}
       {selectedImageIdx !== null && (
         <ImageViewer
+          genre={genre}
           selectedImage={images[selectedImageIdx]} // not global, which is slower
           onClose={closeModal}
           nextImage={() =>
