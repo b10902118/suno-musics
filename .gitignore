@@ -1,5 +1,6 @@
 /public/*
 !/public/genres.json
+!/public/icon.png
 
 # Logs
 logs
