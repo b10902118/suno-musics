@@ -10,7 +10,7 @@ function GalleryRoutes() {
   const [genres, setGenres] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("/genres.json")
+    fetch(`${import.meta.env.BASE_URL}genres.json`)
       .then((res) => res.json())
       .then(setGenres);
   }, []);
