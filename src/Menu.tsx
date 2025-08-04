@@ -8,7 +8,7 @@ const genre2icon = {
   popular: "🔥",
   nature: "🌎",
   food: "🌮",
-  animal: "🐾",
+  animal: "🐶",
   woman: "♀️",
   man: "♂️",
 };
@@ -34,23 +34,35 @@ export default function Menu({ genres }: { genres: string[] }) {
     firstLink.focus();
   }, []);
 
-  const handleNav = (genre: string) => {
-    navigate(`/${genre}`, { replace: true });
+  const handleNav = (genre: string, replace: boolean) => {
+    navigate(`/${genre}`, { replace });
   };
 
   const linkClassName =
     "menu-button block w-full text-start rounded-md px-[3vw] py-[3vh] text-black text-[8vw] focus:bg-blue-100 focus:text-blue-700 focus:outline-none transition-colors duration-150";
 
-  const MenuEntry = ({ genre }: { genre: string }) => (
+  const MenuEntry = ({
+    genre,
+    replace = true,
+  }: {
+    genre: string;
+    replace?: boolean;
+  }) => (
     <li key={genre}>
       <button
         type="button"
         data-genre={genre}
         className={linkClassName}
-        onClick={() => handleNav(genre)}
+        onClick={() => handleNav(genre, replace)}
       >
         {genre2icon[genre]} {capitalize(genre)}
       </button>
+    </li>
+  );
+
+  const Divider = () => (
+    <li>
+      <hr className="border-gray-300" />
     </li>
   );
 
@@ -62,10 +74,12 @@ export default function Menu({ genres }: { genres: string[] }) {
       >
         <ul className="flex flex-col gap-[2vh]">
           <MenuEntry genre="favorite" />
+          <Divider />
           {genres.map((genre) => (
             <MenuEntry key={genre} genre={genre} />
           ))}
-          <MenuEntry genre="about" />
+          <Divider />
+          <MenuEntry genre="about" replace={false} />
         </ul>
       </nav>
     </div>

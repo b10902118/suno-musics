@@ -5,6 +5,7 @@ import "./style.css";
 import ImageGallery from "./ImageGallery";
 import Footer from "./Footer";
 import Menu from "./Menu";
+import About from "./About";
 
 function GalleryRoutes() {
   const [genres, setGenres] = useState<string[]>([]);
@@ -23,6 +24,7 @@ function GalleryRoutes() {
         <Routes>
           <Route path="/" element={<Navigate to={`/${genres[0]}`} replace />} />
           <Route path="/menu" element={<Menu genres={genres} />} />
+          <Route path="/about" element={<About />} />
           {genres.map((genre) => (
             <Route
               key={genre}
