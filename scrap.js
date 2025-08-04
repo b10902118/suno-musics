@@ -96,5 +96,7 @@ async function fetchAndParse(category) {
 }
 
 for (const category of categories) {
-  fetchAndParse(category);
+  setTimeout(() => {
+    fetchAndParse(category);
+  }, categories.indexOf(category) * 1000);
 }

@@ -4,9 +4,13 @@ import { useFooterStore } from "./store";
 import { capitalize } from "./utils";
 
 const genre2icon = {
+  favorite: "❤️",
   popular: "🔥",
   nature: "🌎",
-  favorite: "❤️",
+  food: "🌮",
+  animal: "🐾",
+  woman: "♀️",
+  man: "♂️",
 };
 
 export default function Menu({ genres }: { genres: string[] }) {
