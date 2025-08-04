@@ -40,6 +40,20 @@ export default function Menu({ genres }: { genres: string[] }) {
 
   const linkClassName =
     "menu-button block w-full text-start rounded-md px-[3vw] py-[3vh] text-black text-[8vw] focus:bg-blue-100 focus:text-blue-700 focus:outline-none transition-colors duration-150";
+
+  const MenuEntry = ({ genre }: { genre: string }) => (
+    <li key={genre}>
+      <button
+        type="button"
+        data-genre={genre}
+        className={linkClassName}
+        onClick={() => handleNav(genre)}
+      >
+        {genre2icon[genre]} {capitalize(genre)}
+      </button>
+    </li>
+  );
+
   return (
     <div className="h-full w-full flex items-start justify-start bg-white">
       <nav
@@ -47,28 +61,11 @@ export default function Menu({ genres }: { genres: string[] }) {
         onClick={(e) => e.stopPropagation()}
       >
         <ul className="flex flex-col gap-[2vh]">
-          <li key="favorite" className="">
-            <button
-              type="button"
-              data-genre="favorite"
-              className={linkClassName}
-              onClick={() => handleNav("favorite")}
-            >
-              {genre2icon["favorite"]} {capitalize("favorite")}
-            </button>
-          </li>
+          <MenuEntry genre="favorite" />
           {genres.map((genre) => (
-            <li key={genre}>
-              <button
-                type="button"
-                data-genre={genre}
-                className={linkClassName}
-                onClick={() => handleNav(genre)}
-              >
-                {genre2icon[genre]} {capitalize(genre)}
-              </button>
-            </li>
+            <MenuEntry key={genre} genre={genre} />
           ))}
+          <MenuEntry genre="about" />
         </ul>
       </nav>
     </div>
