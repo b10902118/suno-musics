@@ -103,10 +103,10 @@ export default function ImageGallery({ genre }) {
   return (
     <div className="relative h-full w-full bg-gray-100">
       {/* Gallery Grid - Always two columns */}
-      <div className="flex gap-1 py-[3vh] px-[3vw] overflow-y-auto h-full">
+      <div className="flex gap-[1.5vw] py-[3vh] px-[3vw] overflow-y-auto h-full">
         {/* Two Columns */}
         {[0, 1].map((col) => (
-          <div key={col} className="flex-1 space-y-1">
+          <div key={col} className="flex-1 space-y-[1.5vw]">
             {images
               .filter((_, i) => i % 2 === col)
               .map((image) => (
@@ -116,7 +116,7 @@ export default function ImageGallery({ genre }) {
                   className={mixClass(
                     "preview-box",
                     getAspectClass(image.id),
-                    "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-blue-500"
+                    "rounded-sm overflow-hidden duration-300 cursor-pointer group focus:outline-none focus:ring-[1.5vw] focus:ring-blue-500"
                   )}
                   onClick={() => handleImageClick(image)}
                   onKeyDown={
