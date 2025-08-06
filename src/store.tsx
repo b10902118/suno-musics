@@ -62,18 +62,40 @@ export const useFooterStore = create<FooterStore>((set, get) => {
     status: "gallery",
     genre: null,
     favorites: getFavorites(),
-    addFavorite: (imgInfo) => {
+    addFavorite: (imgInfo: ImageInfo) => {
       const info = { ...imgInfo, url: "" };
       const newFavs = [...get().favorites, info];
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
+      //track image_like event
+      try {
+        //@ts-ignore
+        if (typeof window.gtag === "function") {
+          //@ts-ignore
+          window.gtag("event", "image_like", {
+            event_category: "Image",
+            event_label: imgInfo.origin,
+          });
+        }
+      } catch {}
     },
-    removeFavorite: (imgInfo) => {
+    removeFavorite: (imgInfo: ImageInfo) => {
       const newFavs = get().favorites.filter(
         (fav) => fav.origin !== imgInfo.origin
       );
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
+      //track image_unlike event
+      try {
+        //@ts-ignore
+        if (typeof window.gtag === "function") {
+          //@ts-ignore
+          window.gtag("event", "image_unlike", {
+            event_category: "Image",
+            event_label: imgInfo.origin,
+          });
+        }
+      } catch {}
     },
     selectedImage: null,
     setSelectedImage: (image) => {
