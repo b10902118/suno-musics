@@ -3,7 +3,6 @@ import { useFooterStore } from "./store";
 import type { ImageInfo } from "./types";
 
 interface ImageViewerProps {
-  genre: string;
   selectedImage: ImageInfo;
   onClose: () => void;
   nextImage: () => void;
@@ -11,7 +10,6 @@ interface ImageViewerProps {
 }
 
 export default function ImageViewer({
-  genre,
   selectedImage,
   onClose,
   nextImage,

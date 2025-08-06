@@ -153,7 +153,6 @@ export default function ImageGallery({ genre }) {
       {/* Image Viewer Modal */}
       {selectedImageIdx !== null && (
         <ImageViewer
-          genre={genre}
           selectedImage={images[selectedImageIdx]} // not global, which is slower
           onClose={closeModal}
           nextImage={() =>
