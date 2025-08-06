@@ -51,12 +51,18 @@ export default function ImageViewer({
   }, [nextImage, prevImage]);
 
   useEffect(() => {
-    const captions =
-      selectedImage.tags.length >= 3
-        ? selectedImage.tags.slice(3).join("_")
-        : selectedImage.id;
-    const filename = `${genre}-${captions}`;
-    setViewer(imgRef, filename);
+    setViewer(imgRef, selectedImage);
+    //track image_view event
+    try {
+      //@ts-ignore
+      if (typeof window.gtag === "function") {
+        //@ts-ignore
+        window.gtag("event", "image_view", {
+          event_category: "Image",
+          event_label: selectedImage.origin,
+        });
+      }
+    } catch {}
   }, [selectedImage]);
 
   return (

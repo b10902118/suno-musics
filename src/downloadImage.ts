@@ -1,19 +1,37 @@
 //import pica from "pica";
 import type { RefObject } from "react";
+import type { ImageInfo } from "./types";
 
 //const picaInstance = pica();
 
 export default async function downloadImage(
   imgRef: RefObject<HTMLImageElement>,
-  filename: string
+  selectedImage: ImageInfo
 ) {
   try {
+    const filename =
+      selectedImage.tags.length >= 3
+        ? selectedImage.tags.slice(3).join("_")
+        : selectedImage.id;
     const link = document.createElement("a");
     link.href = imgRef.current?.src;
     link.download = filename + ".jpg";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Track download event
+    try {
+      //@ts-ignore
+      if (typeof window.gtag === "function") {
+        //@ts-ignore
+        window.gtag("event", "image_download", {
+          event_category: "Image",
+          event_label: selectedImage.origin,
+        });
+      }
+    } catch {}
+
     /*
     const img = imgRef.current;
     const viewportWidth = window.innerWidth;

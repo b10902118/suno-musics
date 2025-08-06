@@ -1,11 +1,36 @@
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import "./style.css";
 import ImageGallery from "./ImageGallery";
 import Footer from "./Footer";
 import Menu from "./Menu";
 import About from "./About";
+
+function RouteChangeTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    //console.log("Route changed to:", location.pathname + location.search);
+    try {
+      //@ts-ignore
+      if (typeof window.gtag === "function") {
+        //@ts-ignore
+        window.gtag("event", "page_view", {
+          page_path: location.pathname + location.search,
+        });
+      }
+    } catch {}
+  }, [location]);
+
+  return null;
+}
 
 function GalleryRoutes() {
   const [genres, setGenres] = useState<string[]>([]);
@@ -21,6 +46,7 @@ function GalleryRoutes() {
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="flex-1 flex flex-col overflow-y-auto">
+        <RouteChangeTracker />
         <Routes>
           <Route path="/" element={<Navigate to={`/${genres[0]}`} replace />} />
           <Route path="/menu" element={<Menu genres={genres} />} />

@@ -15,7 +15,10 @@ interface FooterStore {
   centerText: string | null;
   setMenu: () => void;
   setGallery: (genre: string, onSL: () => void) => void;
-  setViewer: (imgRef: RefObject<HTMLImageElement>, filename: string) => void;
+  setViewer: (
+    imgRef: RefObject<HTMLImageElement>,
+    selectedImage: ImageInfo
+  ) => void;
 }
 
 function getFavorites() {
@@ -45,10 +48,13 @@ export const useFooterStore = create<FooterStore>((set, get) => {
       onSL: onMenu,
       centerText: genre,
     });
-  const setViewer = (imgRef: RefObject<HTMLImageElement>, filename: string) =>
+  const setViewer = (
+    imgRef: RefObject<HTMLImageElement>,
+    selectedImage: ImageInfo
+  ) =>
     set({
       status: "viewer",
-      onSL: () => downloadImage(imgRef, filename),
+      onSL: () => downloadImage(imgRef, selectedImage),
       centerText: null,
     });
 
