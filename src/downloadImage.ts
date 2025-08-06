@@ -1,14 +1,21 @@
-import pica from "pica";
+//import pica from "pica";
 import type { RefObject } from "react";
 
-const picaInstance = pica();
+//const picaInstance = pica();
 
 export default async function downloadImage(
   imgRef: RefObject<HTMLImageElement>,
   filename: string
 ) {
-  const img = imgRef.current;
   try {
+    const link = document.createElement("a");
+    link.href = imgRef.current?.src;
+    link.download = filename + ".jpg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    /*
+    const img = imgRef.current;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
@@ -54,6 +61,7 @@ export default async function downloadImage(
       "image/jpeg",
       0.95
     );
+    */
   } catch (error) {
     console.error("Download failed:", error);
   }
