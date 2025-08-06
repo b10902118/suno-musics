@@ -12,21 +12,14 @@ import ImageGallery from "./ImageGallery";
 import Footer from "./Footer";
 import Menu from "./Menu";
 import About from "./About";
+import { tagVisit } from "./gtag";
 
 function RouteChangeTracker() {
   const location = useLocation();
 
   useEffect(() => {
     //console.log("Route changed to:", location.pathname + location.search);
-    try {
-      //@ts-ignore
-      if (typeof window.gtag === "function") {
-        //@ts-ignore
-        window.gtag("event", "page_view", {
-          page_path: location.pathname + location.search,
-        });
-      }
-    } catch {}
+    tagVisit(location.pathname + location.search);
   }, [location]);
 
   return null;

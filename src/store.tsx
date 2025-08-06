@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { ImageInfo } from "./types";
 import downloadImage from "./downloadImage";
 import type { RefObject } from "react";
+import { tagLike, tagUnlike } from "./gtag";
 
 interface FooterStore {
   status: "menu" | "gallery" | "viewer";
@@ -67,17 +68,7 @@ export const useFooterStore = create<FooterStore>((set, get) => {
       const newFavs = [...get().favorites, info];
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
-      //track image_like event
-      try {
-        //@ts-ignore
-        if (typeof window.gtag === "function") {
-          //@ts-ignore
-          window.gtag("event", "image_like", {
-            event_category: "Image",
-            event_label: imgInfo.origin,
-          });
-        }
-      } catch {}
+      tagLike(info);
     },
     removeFavorite: (imgInfo: ImageInfo) => {
       const newFavs = get().favorites.filter(
@@ -86,16 +77,7 @@ export const useFooterStore = create<FooterStore>((set, get) => {
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
       //track image_unlike event
-      try {
-        //@ts-ignore
-        if (typeof window.gtag === "function") {
-          //@ts-ignore
-          window.gtag("event", "image_unlike", {
-            event_category: "Image",
-            event_label: imgInfo.origin,
-          });
-        }
-      } catch {}
+      tagUnlike(imgInfo);
     },
     selectedImage: null,
     setSelectedImage: (image) => {

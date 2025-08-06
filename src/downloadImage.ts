@@ -1,7 +1,7 @@
 //import pica from "pica";
 import type { RefObject } from "react";
 import type { ImageInfo } from "./types";
-
+import { tagDownload } from "./gtag";
 //const picaInstance = pica();
 
 export default async function downloadImage(
@@ -19,18 +19,7 @@ export default async function downloadImage(
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    // Track download event
-    try {
-      //@ts-ignore
-      if (typeof window.gtag === "function") {
-        //@ts-ignore
-        window.gtag("event", "image_download", {
-          event_category: "Image",
-          event_label: selectedImage.origin,
-        });
-      }
-    } catch {}
+    tagDownload(selectedImage);
 
     /*
     const img = imgRef.current;

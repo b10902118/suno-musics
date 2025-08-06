@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useFooterStore } from "./store";
 import type { ImageInfo } from "./types";
+import { tagView } from "./gtag";
 
 interface ImageViewerProps {
   selectedImage: ImageInfo;
@@ -51,16 +52,7 @@ export default function ImageViewer({
   useEffect(() => {
     setViewer(imgRef, selectedImage);
     //track image_view event
-    try {
-      //@ts-ignore
-      if (typeof window.gtag === "function") {
-        //@ts-ignore
-        window.gtag("event", "image_view", {
-          event_category: "Image",
-          event_label: selectedImage.origin,
-        });
-      }
-    } catch {}
+    tagView(selectedImage);
   }, [selectedImage]);
 
   return (
