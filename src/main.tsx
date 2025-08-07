@@ -18,8 +18,14 @@ function RouteChangeTracker() {
   const location = useLocation();
 
   useEffect(() => {
-    //console.log("Route changed to:", location.pathname + location.search);
-    tagVisit(location.pathname + location.search);
+    /*
+    console.log(
+      "Route changed to:",
+      //import.meta.env.BASE_URL + location.pathname + location.search // extra slash
+      window.location.pathname
+    );
+    */
+    tagVisit(window.location.pathname);
   }, [location]);
 
   return null;
