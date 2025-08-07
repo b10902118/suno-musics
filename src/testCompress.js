@@ -1,7 +1,9 @@
 import fs from "fs";
-import { compress, decompress } from "./compress";
+import { compress, decompress } from "./compress.js";
 
-const data = JSON.parse(fs.readFileSync("../public/man.json", "utf8"));
+const filename = "../public/animal.json";
+console.log(filename);
+const data = JSON.parse(fs.readFileSync(filename, "utf8"));
 
 let maxLen = 0;
 let maxUrl = "";
