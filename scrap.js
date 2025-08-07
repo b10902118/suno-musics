@@ -4,6 +4,7 @@ import { mkdirSync, existsSync, createWriteStream } from "fs";
 import { join } from "path";
 import axios from "axios";
 import cliProgress from "cli-progress";
+import { compress, decompress } from "./src/compress.js";
 
 async function getWithTimeout(url, options = {}, timeout = 10000) {
   const res = await axios.get(url, {
@@ -109,6 +110,29 @@ async function fetchImage(imgUrl, i, dir, attempt = 0) {
   data.pipe(createWriteStream(filePath));
 }
 
+function validateCompression(catalog) {
+  // validate compression
+  let maxLen = 0;
+  let maxUrl = "";
+  let maxCompressed = "";
+  for (const item of catalog) {
+    const compressed = compress(item.origin);
+    const decompressed = decompress(compressed);
+    if (decompressed !== item.origin) {
+      console.error(
+        `Decompression mismatch:\n${item.origin}\n${decompressed}\n${compressed}`
+      );
+    }
+    if (compressed.length > maxLen) {
+      maxLen = compressed.length;
+      maxUrl = item.origin;
+      maxCompressed = compressed;
+    }
+  }
+  console.log("Max compressed length:", maxLen);
+  console.log("By:", maxUrl, maxCompressed);
+}
+
 async function scrap(category) {
   const { genre, q } = category;
   console.log(`Scraping ${genre}...`);
@@ -143,6 +167,11 @@ async function scrap(category) {
   );
 
   writeFileSync(`./public/${genre}.json`, JSON.stringify(catalog, null, 2));
+
+  try {
+    validateCompression(catalog);
+  } catch {}
+
   console.log("--------------------------------------------------");
 }
 
