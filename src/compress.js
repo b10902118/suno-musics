@@ -1,11 +1,20 @@
-function snakeToCamel(str) {
-  return str.replace(/_([a-z])/g, (match, char) => char.toUpperCase());
+// assumption: no Capital letters in the URL
+
+// ref: https://en.wikipedia.org/wiki/Letter_frequency
+const leastFreqStart = "xzyqkjvnow";
+
+function snakeToTopCamel(str) {
+  // Letters to skip capitalization for
+  return str.replace(/_([a-z])/g, (match, char) =>
+    leastFreqStart.includes(char) ? match : char.toUpperCase()
+  );
 }
 
 function camelToSnake(str) {
   return str.replace(/([A-Z])/g, "_$1").toLowerCase();
 }
 
+// ref: https://mathcenter.oxford.emory.edu/site/math125/englishLetterFreqs/
 const bigrams = ["th", "he", "in", "en", "nt", "re", "er", "an", "ti", "es"];
 
 const prefix = "https://c.pxhere.com/photos/";
@@ -14,7 +23,10 @@ const suffix = ".jpg!s1";
 function replaceBigrams(str) {
   let compressed = str;
   bigrams.forEach((bigram, index) => {
-    compressed = compressed.replace(new RegExp(bigram, "g"), String(index));
+    compressed = compressed.replace(
+      new RegExp(bigram, "g"),
+      leastFreqStart[index].toUpperCase()
+    );
   });
   return compressed;
 }
@@ -29,7 +41,7 @@ export function compress(url) {
   const hex = stripped.slice(0, 2) + stripped.slice(3, 5);
   stripped = stripped.slice(6);
 
-  const camel = snakeToCamel(stripped);
+  const camel = snakeToTopCamel(stripped);
 
   return hex + replaceBigrams(camel);
   // other tricks:
@@ -47,7 +59,10 @@ export function decompress(compressed) {
   let filename = hexName.slice(4);
 
   bigrams.forEach((bigram, index) => {
-    filename = filename.replace(new RegExp(String(index), "g"), bigram);
+    filename = filename.replace(
+      new RegExp(leastFreqStart[index].toUpperCase(), "g"),
+      bigram
+    );
   });
   filename = camelToSnake(filename);
   const main = hexPath + filename + (hash ? `-${hash}` : "");
