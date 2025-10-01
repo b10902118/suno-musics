@@ -13,6 +13,7 @@ import Footer from "./Footer";
 import Menu from "./Menu";
 import About from "./About";
 import { tagVisit } from "./gtag";
+import MusicList from "./MusicList";
 
 function RouteChangeTracker() {
   const location = useLocation();
@@ -44,7 +45,10 @@ function GalleryRoutes() {
 
   return (
     <div className="flex flex-col h-screen w-screen">
-      <div className="flex-1 flex flex-col overflow-y-auto">
+      <div
+        className="flex-1 flex flex-col overflow-y-auto"
+        style={{ scrollbarWidth: "none" }}
+      >
         <RouteChangeTracker />
         <Routes>
           <Route path="/" element={<Navigate to={`/${genres[0]}`} replace />} />
@@ -54,7 +58,7 @@ function GalleryRoutes() {
             <Route
               key={genre}
               path={`/${genre}`}
-              element={<ImageGallery key={genre} genre={genre} />}
+              element={<MusicList key={genre} genre={genre} />}
             />
           ))}
           <Route
