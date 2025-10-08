@@ -11,7 +11,7 @@ export default function MusicList({ genre }: { genre: string }) {
 
   useEffect(() => {
     if (genre === "favorite") {
-      const favs = localStorage.getItem("favorite");
+      const favs = localStorage.getItem("suno-musics-favorite");
       if (favs) {
         try {
           const data = JSON.parse(favs);

@@ -17,7 +17,7 @@ interface FooterStore {
 }
 
 function getFavorites() {
-  const favJSON = localStorage.getItem("favorite");
+  const favJSON = localStorage.getItem("suno-musics-favorite");
   if (favJSON) {
     try {
       return JSON.parse(favJSON);
@@ -51,7 +51,7 @@ export const useFooterStore = create<FooterStore>((set, get) => {
     addFavorite: (imgInfo: AudioInfo) => {
       const info = { ...imgInfo, url: "" };
       const newFavs = [...get().favorites, info];
-      localStorage.setItem("favorite", JSON.stringify(newFavs));
+      localStorage.setItem("suno-musics-favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
       tagLike(info);
     },
@@ -59,7 +59,7 @@ export const useFooterStore = create<FooterStore>((set, get) => {
       const newFavs = get().favorites.filter(
         (fav) => fav.origin !== imgInfo.origin
       );
-      localStorage.setItem("favorite", JSON.stringify(newFavs));
+      localStorage.setItem("suno-musics-favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
       //track image_unlike event
       tagUnlike(imgInfo);

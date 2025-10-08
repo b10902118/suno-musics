@@ -65,8 +65,10 @@ export default function AudioPlayer({
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
+    const handleEnded = () => setIsPlaying(false);
 
     audio.addEventListener("timeupdate", updateTime);
+    audio.addEventListener("ended", handleEnded);
 
     //audio.load();
     return () => {
