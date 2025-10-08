@@ -34,7 +34,7 @@ jobs:
         run: pnpm exec node scrap.js
 
       - name: Build project
-        run: pnpm build --base=/pxhere-images/
+        run: pnpm build --base=/suno-musics/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
