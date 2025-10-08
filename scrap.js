@@ -64,7 +64,7 @@ async function getRandomData(filePath, count) {
 
 async function scrap(genre) {
   // data at ./data/${category}.jsonl, randomly select 50 lines from the file
-  const audioData = await getRandomData(`./data/${genre}.jsonl`, 10);
+  const audioData = await getRandomData(`./data/${genre}.jsonl`, 15);
 
   const dir = `./public/audio/${genre}`;
   if (!existsSync(dir)) {
