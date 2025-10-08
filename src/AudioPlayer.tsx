@@ -93,7 +93,12 @@ export default function AudioPlayer({
       setCurrentTime(0);
       audio
         .play()
-        .then(() => {
+        .catch((e) => {
+          // TODO
+          console.error("Play error:", e);
+        })
+        .finally(() => {
+          // even throw it still plays, so use finally
           intervalRef.current = setInterval(() => {
             setCurrentTime(audio.currentTime);
             if (audio.currentTime >= duration) {
@@ -102,10 +107,6 @@ export default function AudioPlayer({
               setIsPlaying(false);
             }
           }, 1000);
-        })
-        .catch((e) => {
-          // TODO
-          console.error("Play error:", e);
         });
     }
     setIsPlaying(!isPlaying);
