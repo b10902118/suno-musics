@@ -64,29 +64,49 @@ export default function AudioPlayer({
     const audio = audioRef.current;
     if (!audio) return;
 
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const handleEnded = () => setIsPlaying(false);
+    //const updateTime = () => setCurrentTime(audio.currentTime);
+    //const handleEnded = () => setIsPlaying(false);
 
-    audio.addEventListener("timeupdate", updateTime);
-    audio.addEventListener("ended", handleEnded);
+    //audio.addEventListener("timeupdate", updateTime);
+    //audio.addEventListener("ended", handleEnded);
 
     //audio.load();
     return () => {
-      audio.removeEventListener("timeupdate", updateTime);
+      //audio.removeEventListener("timeupdate", updateTime);
+      //audio.removeEventListener("ended", handleEnded);
     };
   }, []);
 
+  const intervalRef = useRef<number | null>(null);
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
     if (isPlaying) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
       audio.pause();
       // due to reject when pause op in progress
-      setTimeout(() => {
-        audio.currentTime = 0; // Reset to start
-      }, 1000);
     } else {
-      audio.play();
+      audio.currentTime = 0;
+      setCurrentTime(0);
+      audio
+        .play()
+        .then(() => {
+          intervalRef.current = setInterval(() => {
+            setCurrentTime(audio.currentTime);
+            if (audio.currentTime >= duration) {
+              clearInterval(intervalRef.current);
+              intervalRef.current = null;
+              setIsPlaying(false);
+            }
+          }, 1000);
+        })
+        .catch((e) => {
+          // TODO
+          console.error("Play error:", e);
+        });
     }
     setIsPlaying(!isPlaying);
   };
