@@ -34,6 +34,7 @@ export default function AudioPlayer({
   const titleRef = useRef<HTMLSpanElement>(null);
   const authorRef = useRef<HTMLSpanElement>(null);
   const [titleOverflow, setTitleOverflow] = useState(false);
+  // @ts-ignore
   const [authorOverflow, setAuthorOverflow] = useState(false);
 
   const { addFavorite, removeFavorite } = useFooterStore.getState();
