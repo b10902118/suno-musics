@@ -78,7 +78,7 @@ export default function AudioPlayer({
   }, []);
 
   const intervalRef = useRef<number | null>(null);
-  const togglePlay = () => {
+  const togglePlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
     if (isPlaying) {
@@ -89,8 +89,7 @@ export default function AudioPlayer({
       audio.pause();
       // due to reject when pause op in progress
     } else {
-      audio.currentTime = 0;
-      setCurrentTime(0);
+      await new Promise((r) => setTimeout(r, 500));
       audio
         .play()
         .catch((e) => {
@@ -98,6 +97,8 @@ export default function AudioPlayer({
           console.error("Play error:", e);
         })
         .finally(() => {
+          audio.currentTime = 0;
+          setCurrentTime(0);
           // even throw it still plays, so use finally
           intervalRef.current = setInterval(() => {
             setCurrentTime(audio.currentTime);
