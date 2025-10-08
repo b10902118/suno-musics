@@ -8,7 +8,6 @@ import {
   useLocation,
 } from "react-router-dom";
 import "./style.css";
-import ImageGallery from "./ImageGallery";
 import Footer from "./Footer";
 import Menu from "./Menu";
 import About from "./About";
@@ -64,7 +63,7 @@ function GalleryRoutes() {
           <Route
             key="favorite"
             path="/favorite"
-            element={<ImageGallery key="favorite" genre="favorite" />}
+            element={<MusicList key="favorite" genre="favorite" />}
           />
           <Route path="*" element={<div>Not found</div>} />
         </Routes>

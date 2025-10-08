@@ -2,8 +2,8 @@ export interface AudioInfo {
   id: number;
   url: string;
   origin: string;
-  duration: number; // seconds
   title: string;
-  imageUrl: string;
+  image: string;
   tags: string[];
+  duration: number; // seconds
 }

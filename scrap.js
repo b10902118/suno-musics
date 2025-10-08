@@ -1,10 +1,10 @@
-import { JSDOM } from "jsdom";
 import { readFileSync, writeFileSync, readdirSync, unlinkSync } from "fs";
 import { mkdirSync, existsSync, createWriteStream } from "fs";
 import { join } from "path";
 import axios from "axios";
+import { createReadStream } from "fs";
+import readline from "readline";
 import cliProgress from "cli-progress";
-import { compress, decompress } from "./src/compress.js";
 
 async function getWithTimeout(url, options = {}, timeout = 10000) {
   const res = await axios.get(url, {
@@ -14,15 +14,13 @@ async function getWithTimeout(url, options = {}, timeout = 10000) {
   return res.data;
 }
 
-function getCategories() {
-  const genres = JSON.parse(readFileSync("./public/genres.json", "utf-8"));
-  return genres.map((genre) => ({
-    genre,
-    q: genre === "popular" ? "" : genre,
-  }));
+async function fetchAudio(audioUrl, i, dir, attempt = 0) {
+  const data = await getWithTimeout(audioUrl, { responseType: "stream" });
+  const filePath = join(dir, `${i}.mp3`);
+  data.pipe(createWriteStream(filePath));
 }
 
-const categories = getCategories();
+const categories = JSON.parse(readFileSync("./public/genres.json", "utf-8"));
 
 async function retry(f, n = 3) {
   let attempt = 0;
@@ -38,108 +36,37 @@ async function retry(f, n = 3) {
   }
 }
 
-async function fetchParsePage(q, page, attempt = 0) {
-  const url = `https://pxhere.com/en/photos?q=${q}&order=popular&page=${page}&format=json`;
-  //console.log(`Attempt ${attempt + 1}: Fetching ${url}`);
-  const data = await getWithTimeout(url);
-  if (!data) {
-    throw new Error("no data");
+async function getRandomData(filePath, count) {
+  // First pass: count lines
+  let totalLines = 0;
+  const rl1 = readline.createInterface({ input: createReadStream(filePath) });
+  for await (const _ of rl1) totalLines++;
+  rl1.close();
+
+  // Pick random unique line numbers
+  const chosen = new Set();
+  while (chosen.size < count && chosen.size < totalLines) {
+    chosen.add(Math.floor(Math.random() * totalLines));
   }
-  const dom = new JSDOM(data.data);
-  const images = [...dom.window.document.querySelectorAll("img")];
-  return images.map((img) => ({
-    src: img.src,
-    tags: img.title ? img.title.split(",").map((t) => t.trim()) : [],
-  }));
-}
 
-function randomSelect(arr, count) {
-  if (count >= arr.length) {
-    throw new Error("randomSelect: Count exceeds array length");
+  // Second pass: collect chosen lines
+  const result = [];
+  let idx = 0;
+  const rl2 = readline.createInterface({ input: createReadStream(filePath) });
+  for await (const line of rl2) {
+    if (chosen.has(idx)) result.push(JSON.parse(line));
+    idx++;
+    if (result.length === chosen.size) break;
   }
-  //random shuffle
-  const shuffled = arr.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+  rl2.close();
+  return result;
 }
 
-function sampleNumbers(st, ed, count) {
-  const arr = [];
-  for (let i = st; i < ed; i++) {
-    arr.push(i);
-  }
-  return randomSelect(arr, count);
-}
+async function scrap(genre) {
+  // data at ./data/${category}.jsonl, randomly select 50 lines from the file
+  const audioData = await getRandomData(`./data/${genre}.jsonl`, 10);
 
-function samplePages() {
-  const pages = [];
-  for (let i = 0; i < 5; i++) {
-    const count = 5 - i;
-    const st = i * 30;
-    const ed = st + 30;
-    const sampled = sampleNumbers(st, ed, count);
-    pages.push(...sampled);
-  }
-  return pages;
-}
-
-async function scrapPages(genre, q) {
-  const pages = samplePages();
-
-  const ImgDataPool = [];
-  // Do sequentially
-  // Progress bar setup
-  const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-  bar.start(pages.length, 0);
-
-  for (const [idx, page] of pages.entries()) {
-    try {
-      const imgData = await fetchParsePage(q, page);
-      ImgDataPool.push(...imgData);
-    } catch (e) {
-      console.error(`Error fetching page ${page} for ${genre}: ${e.message}`);
-    }
-    bar.update(idx + 1);
-  }
-  bar.stop();
-  return ImgDataPool;
-}
-
-async function fetchImage(imgUrl, i, dir, attempt = 0) {
-  const data = await getWithTimeout(imgUrl, { responseType: "stream" });
-  const filePath = join(dir, `${i}.jpg`); // assume all jpg
-  data.pipe(createWriteStream(filePath));
-}
-
-function validateCompression(catalog) {
-  // validate compression
-  let maxLen = 0;
-  let maxUrl = "";
-  let maxCompressed = "";
-  for (const item of catalog) {
-    const compressed = compress(item.origin);
-    const decompressed = decompress(compressed);
-    if (decompressed !== item.origin) {
-      console.error(
-        `Decompression mismatch:\n${item.origin}\n${decompressed}\n${compressed}`
-      );
-    }
-    if (compressed.length > maxLen) {
-      maxLen = compressed.length;
-      maxUrl = item.origin;
-      maxCompressed = compressed;
-    }
-  }
-  console.log("Max compressed length:", maxLen);
-  console.log("By:", maxUrl, maxCompressed);
-}
-
-async function scrap(category) {
-  const { genre, q } = category;
-  console.log(`Scraping ${genre}...`);
-  const ImgDataPool = await scrapPages(genre, q);
-  const ImgData = randomSelect(ImgDataPool, 50);
-
-  const dir = `./public/images/${genre}`;
+  const dir = `./public/audio/${genre}`;
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   } else {
@@ -150,27 +77,33 @@ async function scrap(category) {
   }
 
   const catalog = [];
-  await Promise.all(
-    ImgData.map(async (imgDatum, i) => {
-      try {
-        await fetchImage(imgDatum.src, i, dir); //retry(fetchImage.bind(null, imgUrl, i));
-        // push if succ
-        catalog.push({
-          url: `images/${genre}/${i}.jpg`,
-          origin: imgDatum.src,
-          tags: imgDatum.tags,
-        });
-      } catch (e) {
-        console.error(`Error downloading "${imgDatum.src}": ${e.message}`);
-      }
-    })
-  );
+
+  const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+  bar.start(audioData.length, 0);
+  for (let i = 0; i < audioData.length; i++) {
+    const audioDatum = audioData[i];
+    try {
+      await fetchAudio(audioDatum.audio_url, i, dir); //retry(fetchImage.bind(null, imgUrl, i));
+      // push if succ
+      catalog.push({
+        url: `audio/${genre}/${i}.mp3`,
+        origin: audioDatum.audio_url,
+        title: audioDatum.title,
+        image: audioDatum.image_url,
+        tags: audioDatum.metadata.tags,
+        duration: audioDatum.metadata.duration,
+      });
+    } catch (e) {
+      console.error(
+        `Error downloading "${audioDatum.audio_url}": ${e.message}`
+      );
+    }
+    bar.update(i + 1);
+    await new Promise((r) => setTimeout(r, 5000));
+  }
+  bar.stop();
 
   writeFileSync(`./public/${genre}.json`, JSON.stringify(catalog, null, 2));
-
-  try {
-    validateCompression(catalog);
-  } catch {}
 
   console.log("--------------------------------------------------");
 }

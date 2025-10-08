@@ -8,17 +8,40 @@ export default function MusicList({ genre }: { genre: string }) {
   const [audios, setAudios] = useState<AudioInfo[]>([]);
   const { setGallery } = useFooterStore.getState();
   const navigate = useNavigate();
+
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}${genre}.json`)
-      .then((res) => res.json())
-      .then((data) =>
-        setAudios(
-          data.map((item, idx) => ({
-            id: idx,
-            ...item,
-          }))
-        )
-      );
+    if (genre === "favorite") {
+      const favs = localStorage.getItem("favorite");
+      if (favs) {
+        try {
+          const data = JSON.parse(favs);
+          setAudios(
+            data.map((item, idx) => ({
+              ...item,
+              id: idx,
+              url: item.origin,
+            }))
+          );
+        } catch (e) {
+          setAudios([]);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (genre !== "favorite") {
+      fetch(`${import.meta.env.BASE_URL}${genre}.json`)
+        .then((res) => res.json())
+        .then((data) =>
+          setAudios(
+            data.map((item, idx) => ({
+              id: idx,
+              ...item,
+            }))
+          )
+        );
+    }
   }, []);
 
   // didn't find a way to set it at store once
@@ -36,9 +59,20 @@ export default function MusicList({ genre }: { genre: string }) {
         {audios.map((music) => (
           <li
             key={music.id}
-            className="flex items-center border border-gray-200 p-4 shadow-sm"
+            className="flex items-center border border-gray-200 p-4 relative"
+            style={{
+              backgroundImage: `url(${music.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
           >
-            <AudioPlayer title={music.title} src={music.url} />
+            <div className="absolute inset-0 bg-white opacity-60 pointer-events-none" />
+            <AudioPlayer
+              className="relative z-10"
+              audioInfo={music}
+              canDownload={genre !== "favorite"}
+            />
           </li>
         ))}
       </ul>

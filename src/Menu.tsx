@@ -5,12 +5,10 @@ import { capitalize } from "./utils";
 
 const genre2icon = {
   favorite: "❤️",
-  popular: "🔥",
-  nature: "🌎",
-  food: "🌮",
-  animal: "🐶",
-  woman: "♀️",
-  man: "♂️",
+  pop: "🔥",
+  rock: "🧑🏻‍🎤",
+  electric: "⚡",
+  ballad: "💕",
 };
 
 export default function Menu({ genres }: { genres: string[] }) {

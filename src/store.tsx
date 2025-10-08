@@ -1,25 +1,19 @@
 import { create } from "zustand";
-import type { ImageInfo } from "./types";
-import downloadImage from "./downloadImage";
-import type { RefObject } from "react";
+import type { AudioInfo } from "./types";
 import { tagLike, tagUnlike } from "./gtag";
 
 interface FooterStore {
   status: "menu" | "gallery" | "viewer";
   genre: string | null;
-  favorites: ImageInfo[];
-  addFavorite: (imgInfo: ImageInfo) => void;
-  removeFavorite: (imgInfo: ImageInfo) => void;
-  selectedImage: ImageInfo | null;
-  setSelectedImage: (image: ImageInfo | null) => void;
+  favorites: AudioInfo[];
+  addFavorite: (imgInfo: AudioInfo) => void;
+  removeFavorite: (imgInfo: AudioInfo) => void;
+  selectedImage: AudioInfo | null;
+  setSelectedImage: (image: AudioInfo | null) => void;
   onSL: () => void | null;
   centerText: string | null;
   setMenu: () => void;
   setGallery: (genre: string, onSL: () => void) => void;
-  setViewer: (
-    imgRef: RefObject<HTMLImageElement>,
-    selectedImage: ImageInfo
-  ) => void;
 }
 
 function getFavorites() {
@@ -49,28 +43,19 @@ export const useFooterStore = create<FooterStore>((set, get) => {
       onSL: onMenu,
       centerText: genre,
     });
-  const setViewer = (
-    imgRef: RefObject<HTMLImageElement>,
-    selectedImage: ImageInfo
-  ) =>
-    set({
-      status: "viewer",
-      onSL: () => downloadImage(imgRef, selectedImage),
-      centerText: null,
-    });
 
   return {
     status: "gallery",
     genre: null,
     favorites: getFavorites(),
-    addFavorite: (imgInfo: ImageInfo) => {
+    addFavorite: (imgInfo: AudioInfo) => {
       const info = { ...imgInfo, url: "" };
       const newFavs = [...get().favorites, info];
       localStorage.setItem("favorite", JSON.stringify(newFavs));
       set({ favorites: newFavs });
       tagLike(info);
     },
-    removeFavorite: (imgInfo: ImageInfo) => {
+    removeFavorite: (imgInfo: AudioInfo) => {
       const newFavs = get().favorites.filter(
         (fav) => fav.origin !== imgInfo.origin
       );
@@ -87,6 +72,5 @@ export const useFooterStore = create<FooterStore>((set, get) => {
     centerText: null, // to be set by gallery
     setMenu,
     setGallery,
-    setViewer,
   };
 });
