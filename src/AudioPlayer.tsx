@@ -60,6 +60,7 @@ export default function AudioPlayer({
     }
   }, [audioInfo.title]);
 
+  /*
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -76,6 +77,7 @@ export default function AudioPlayer({
       //audio.removeEventListener("ended", handleEnded);
     };
   }, []);
+  */
 
   const intervalRef = useRef<number | null>(null);
   const togglePlay = async () => {
@@ -89,7 +91,6 @@ export default function AudioPlayer({
       audio.pause();
       // due to reject when pause op in progress
     } else {
-      await new Promise((r) => setTimeout(r, 500));
       audio
         .play()
         .catch((e) => {
