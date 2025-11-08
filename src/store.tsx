@@ -14,6 +14,9 @@ interface FooterStore {
   centerText: string | null;
   setMenu: () => void;
   setGallery: (genre: string, onSL: () => void) => void;
+  // ensure only one audio plays at a time
+  currentAudio: HTMLAudioElement | null;
+  setCurrentAudio: (el: HTMLAudioElement | null) => void;
 }
 
 function getFavorites() {
@@ -48,6 +51,8 @@ export const useFooterStore = create<FooterStore>((set, get) => {
     status: "gallery",
     genre: null,
     favorites: getFavorites(),
+    currentAudio: null,
+    setCurrentAudio: (el: HTMLAudioElement | null) => set({ currentAudio: el }),
     addFavorite: (imgInfo: AudioInfo) => {
       const info = { ...imgInfo, url: "" };
       const newFavs = [...get().favorites, info];

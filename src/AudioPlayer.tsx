@@ -38,6 +38,7 @@ export default function AudioPlayer({
   const [authorOverflow, setAuthorOverflow] = useState(false);
 
   const { addFavorite, removeFavorite } = useFooterStore.getState();
+  const { currentAudio, setCurrentAudio } = useFooterStore();
 
   const { favorites } = useFooterStore();
   const isFavorite = favorites.some((obj) => obj.origin === audioInfo?.origin);
@@ -83,12 +84,20 @@ export default function AudioPlayer({
   const togglePlay = async () => {
     const audio = audioRef.current;
     if (!audio) return;
+    // stop any other playing audio first
+    if (!isPlaying && currentAudio && currentAudio !== audio) {
+      try {
+        currentAudio.pause();
+      } catch {}
+    }
     if (isPlaying) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
       audio.pause();
+      // clear global if this was current
+      if (currentAudio === audio) setCurrentAudio(null);
       // due to reject when pause op in progress
     } else {
       audio
@@ -107,12 +116,28 @@ export default function AudioPlayer({
               clearInterval(intervalRef.current);
               intervalRef.current = null;
               setIsPlaying(false);
+              if (currentAudio === audio) setCurrentAudio(null);
             }
           }, 1000);
+          setCurrentAudio(audio);
         });
     }
     setIsPlaying(!isPlaying);
   };
+
+  // if another player starts, pause this one
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (currentAudio && currentAudio !== audio && isPlaying) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      audio.pause();
+      setIsPlaying(false);
+    }
+  }, [currentAudio]);
 
   return (
     <div className={`flex items-center w-full ${className}`}>
