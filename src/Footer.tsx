@@ -45,7 +45,14 @@ export default function Footer() {
 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape" && SLIcon && onSL) onSL();
-      if (e.key === "Enter" && onEnter) onEnter();
+      else if (e.key === "Enter" && onEnter) onEnter();
+      else if (e.key === "1") {
+        // @ts-ignore
+        if (navigator.volumeManager) navigator.volumeManager.requestDown();
+      } else if (e.key === "3") {
+        // @ts-ignore
+        if (navigator.volumeManager) navigator.volumeManager.requestUp();
+      }
     }
 
     // delay to prevent enter continuous firing
