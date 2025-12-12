@@ -181,7 +181,7 @@ export default function AudioPlayer({
       <div className="flex gap-2 w-[25%] justify-end">
         <a
           href={audioInfo.url}
-          download
+          download={`${audioInfo.title}.mp3`}
           className="w-1/2 bg-transparent border-none p-0 flex items-center justify-center outline-none focus:ring-[0.5vw] focus:ring-white focus:ring-offset-[1vw] focus:ring-offset-yellow-500 rounded-[0.5vw]"
           onClick={() => tagDownload(audioInfo)}
           style={{ visibility: canDownload ? "visible" : "hidden" }}
