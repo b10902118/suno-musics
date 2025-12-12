@@ -59,7 +59,7 @@ export default function MusicList({ genre }: { genre: string }) {
         {audios.map((music) => (
           <li
             key={music.id}
-            className="flex items-center border border-gray-200 p-4 relative"
+            className="flex items-center border border-gray-200 px-[4vw] py-[2vh] relative"
             style={{
               backgroundImage: `url(${music.image})`,
               backgroundSize: "cover",

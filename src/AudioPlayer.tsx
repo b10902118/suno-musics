@@ -155,7 +155,7 @@ export default function AudioPlayer({
       </div>
       <div className="flex flex-col font-sans w-[55%] overflow-hidden">
         <span
-          className={`font-bold text-base text-nowrap ${
+          className={`font-bold text-[6vh] text-nowrap ${
             titleOverflow ? "marquee" : ""
           }`}
           style={{ width: "100%", display: "block" }}
@@ -170,7 +170,7 @@ export default function AudioPlayer({
           style={{ width: "100%", display: "block" }}
           ref={authorRef}
         ></span>
-        <span className="font-small">
+        <span className="text-[5vh]">
           {isPlaying
             ? `${formatTime(currentTime)} / ${formatTime(duration)}`
             : formatTime(duration)}
