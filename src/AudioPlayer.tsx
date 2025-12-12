@@ -146,7 +146,7 @@ export default function AudioPlayer({
       <div className="w-[20%] flex justify-start">
         <button
           onClick={togglePlay}
-          className="w-[60%] aspect-square bg-transparent border-none p-0 "
+          className="w-[60%] aspect-square bg-transparent border-none p-0 outline-none focus:ring-[0.5vw] focus:ring-white focus:ring-offset-[1vw] focus:ring-offset-yellow-500 rounded-[0.5vw]"
         >
           {isPlaying ? (
             <StopIcon className="text-gray-700" />
@@ -182,14 +182,14 @@ export default function AudioPlayer({
         <a
           href={audioInfo.url}
           download
-          className="w-1/2 bg-transparent border-none p-0 flex items-center justify-center"
+          className="w-1/2 bg-transparent border-none p-0 flex items-center justify-center outline-none focus:ring-[0.5vw] focus:ring-white focus:ring-offset-[1vw] focus:ring-offset-yellow-500 rounded-[0.5vw]"
           onClick={() => tagDownload(audioInfo)}
           style={{ visibility: canDownload ? "visible" : "hidden" }}
         >
           <ArrowDownTrayIcon className="text-gray-700 w-full h-full" />
         </a>
         <button
-          className="w-1/2 bg-transparent border-none p-0"
+          className="w-1/2 bg-transparent border-none p-0 outline-none focus:ring-[0.5vw] focus:ring-white focus:ring-offset-[1vw] focus:ring-offset-yellow-500 rounded-[0.5vw]"
           onClick={toggleLike}
         >
           <HeartIcon className={liked ? "text-red-500" : "text-gray-700"} />
