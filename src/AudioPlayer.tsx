@@ -140,7 +140,9 @@ export default function AudioPlayer({
   }, [currentAudio]);
 
   return (
-    <div className={`flex items-center w-full ${className}`}>
+    <div
+      className={`audio-player-container flex items-center w-full ${className}`}
+    >
       <div className="w-[20%] flex justify-start">
         <button
           onClick={togglePlay}
